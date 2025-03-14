@@ -1,0 +1,88 @@
+@startuml ERD
+
+title "ERD For Clip Genius"
+entity Sports {
+  *SportID : INT <<PK>>
+  --
+  Name : VARCHAR(100)
+  Description : TEXT
+  CreatedDate : DATETIME
+}
+
+entity Users {
+  *UserID : INT <<PK>>
+  --
+  Username : VARCHAR(100)
+  Email : VARCHAR(255)
+  PasswordHash : VARCHAR(255)
+  RegistrationDate : DATETIME
+  LastLoginDate : DATETIME
+  ModifiedDate : DATETIME
+  Role : ENUM('admin', 'viewer')
+}
+
+entity Matches {
+  *MatchID : INT <<PK>>
+  --
+  Date : DATE
+  SportID : INT <<FK>>
+  Team1Name : VARCHAR(255)
+  Team2Name : VARCHAR(255)
+}
+
+entity Videos {
+  *VideoID : INT <<PK>>
+  --
+  MatchID : INT <<FK>>
+  VideoFilePath : VARCHAR(1024)
+  ThumbnailPath : VARCHAR(1024)
+  FileSize : BIGINT
+  Duration : INT
+  Views : BIGINT
+  CreatedDate : DATETIME
+  ModifiedDate : DATETIME
+}
+
+entity Tags {
+  *TagID : INT <<PK>>
+  --
+  TagName : VARCHAR(100)
+}
+
+entity VideoTags {
+  *VideoTagID : INT <<PK>>
+  --
+  VideoID : INT <<FK>>
+  TagID : INT <<FK>>
+}
+
+entity Comments {
+  *CommentID : INT <<PK>>
+  --
+  VideoID : INT <<FK>>
+  UserID : INT <<FK>>
+  Comment : TEXT
+  CommentDate : DATETIME
+  ModifiedDate : DATETIME
+}
+
+entity Ratings {
+  *RatingID : INT <<PK>>
+  --
+  VideoID : INT <<FK>>
+  UserID : INT <<FK>>
+  Rating : TINYINT
+  RatingDate : DATETIME
+}
+
+' Define relationships
+Sports ||--o{ Matches : "1..*"
+Matches ||--o{ Videos : "1..*"
+Videos ||--o{ VideoTags : "1..*"
+Tags ||--o{ VideoTags : "1..*"
+Videos ||--o{ Comments : "1..*"
+Users ||--o{ Comments : "1..*"
+Videos ||--o{ Ratings : "1..*"
+Users ||--o{ Ratings : "1..*"
+
+@enduml

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Specification</title>
+</head>
+
+<body>
+    <main>
+        <h1>Design Specification Document for</h1>
+        <span class="text-8xl mb-[50px] font-bold">Clip Genius</span>
+        <hr>
+        <h2>Introduction</h2>
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Vero culpa aspernatur quisquam voluptatibus
+            recusandae sit explicabo amet? Esse nostrum voluptatem laudantium deserunt dolores cum, vel, ratione
+            dignissimos iste, odit nam?</p>
+
+        <h2>Database Design</h2>
+        <p>This database design organizes sports, matches, videos, users, comments, ratings, and tags into separate
+            tables. Each table has a unique ID and links to others using foreign keys. For example, matches link to
+            sports, videos link to matches, and comments/ratings link to videos and users. Tags are assigned to videos
+            through a separate table. The design avoids duplicate data, ensures accuracy, and supports features like
+            adding sports, uploading videos, tagging, commenting, and rating. It is simple, efficient, and scalable.</p>
+        <p style="margin-top: 20px;">The database schema consists of the following tables:</p>
+        <ol start="1">
+            <li>
+                <p><strong>Sports</strong>: Stores information about sports.</p>
+            </li>
+            <li>
+                <p><strong>Users</strong>: Manages user accounts and roles. Synced With Original Providers Users
+                    Database</p>
+            </li>
+            <li>
+                <p><strong>Matches</strong>: Stores details about matches for specific sports.</p>
+            </li>
+            <li>
+                <p><strong>Videos</strong>: Stores video metadata and file paths.</p>
+            </li>
+            <li>
+                <p><strong>Tags</strong>: Manages tags for categorizing videos.</p>
+            </li>
+            <li>
+                <p><strong>VideoTags</strong>: Links videos to tags.</p>
+            </li>
+            <li>
+                <p><strong>Comments</strong>: Stores user comments on videos.</p>
+            </li>
+            <li>
+                <p><strong>Ratings</strong>: Stores user ratings for videos.</p>
+            </li>
+        </ol>
+        <img class="mx-auto shadow-none" src="../out/Docs/uml/ERD/ERD.svg" width="60%" alt="" srcset="">
+
+        <h2>API Design</h2>
+
+    </main>
+
+    <script src="../frontend/static/ReportsFormatter.js"></script>
+
+</body>
+
+</html>
