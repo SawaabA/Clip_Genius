@@ -24,7 +24,6 @@ function generateIndex(containerId = "index") {
         document.body.insertBefore(container, document.body.firstChild);
     }
     container.innerHTML = `<h3 style='margin-top:15px;'>Table of Contents</h3>`;
-
     const indexList = document.createElement("ul");
     indexList.className = "menu"
     container.appendChild(indexList);
@@ -38,14 +37,14 @@ function generateIndex(containerId = "index") {
         }
         const link = document.createElement("a");
         link.href = `#${heading.id}`;
-        link.className = "m-0 p-0"
+        // link.className = "m-0 p-0 link"
         link.textContent = heading.textContent;
         listItem.appendChild(link);
-        listItem.style.marginLeft = `${(level - 2) * 5}px`;
+        listItem.style.marginLeft = `${(level - 2) * 20}px`;
 
         indexList.appendChild(listItem);
     });
-    container.classList.add("lg:w-64", "overflow-y-scroll", "pl-2", "border", "print:border-0")
+    container.classList.add("lg:w-64", "overflow-y-scroll", "border", "print:border-0", "p-3")
 }
 
 function updateCSS(tags, addClasses = [], removeClasses = []) {
@@ -84,7 +83,7 @@ function loadStylesheet(href) {
 function updateCSS_ALL() {
     updateCSS(['h1'], ['text-3xl', 'font-bold']);
     updateCSS(['h2'], ['text-2xl', 'font-semibold', 'mt-8']);
-    updateCSS(['h3'], ['text-lg', 'font-semibold', 'mb-5']);
+    updateCSS(['h3'], ['text-lg', 'font-semibold', 'mt-5']);
     updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4']);
     updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3']);
     updateCSS(['h6'], ['text-xs', 'font-semibold', 'mt-2']);
@@ -97,7 +96,6 @@ function updateCSS_ALL() {
     updateCSS(['th'], ['px-4', 'py-2', 'text-left', 'font-bold']);
     updateCSS(['td'], ['px-4', 'py-2', 'border', 'border-gray-200']);
     updateCSS(['img'], ['p-10']);
-    updateCSS(['a'], ['text-blue-700', 'underline', 'hover:text-blue-900']);
     updateCSS(['blockquote'], ['border-l-4', 'border-gray-300', 'pl-4', 'italic', 'text-gray-600']);
     updateCSS(['code'], ['bg-gray-100', 'p-1', 'rounded', 'text-sm', 'font-mono']);
     updateCSS(['pre'], ['bg-gray-100', 'p-4', 'rounded', 'overflow-x-auto']);
@@ -118,7 +116,8 @@ loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css")
 document.documentElement.setAttribute("data-theme", "light");
 setTimeout(() => {
     updateCSS_ALL()
+    generateIndex()
 }, 200);
-generateIndex()
+
 document.querySelector("main").className = "container mx-auto px-4 py-8 overflow-y-scroll print:px-0"
 document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")
