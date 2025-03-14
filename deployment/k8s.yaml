@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: generic-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: generic-app
+  template:
+    metadata:
+      labels:
+        app: generic-app
+    spec:
+      containers:
+      - name: generic-app
+        image: generic-app:latest
+        ports:
+        - containerPort: 8000
