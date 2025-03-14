@@ -1,0 +1,33 @@
+@startuml UsecaseDiagram
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Admin" as Admin
+actor "Editor" as Editor 
+actor "Viewer" as Viewer
+
+rectangle "Clip Genius" {
+
+    usecase "Manage Sports" as UC1
+    usecase "Manage Users" as UC2
+    usecase "Create New Match Entry" as UC3
+    usecase "Upload Video" as UC4
+    usecase "View Video" as UC5
+    usecase "Add Tags to Video" as UC6
+    usecase "Add Comment" as UC8
+    usecase "Rate Video" as UC9
+    usecase "View Comments" as UC10
+    usecase "View Ratings" as UC11
+}
+
+Viewer --> UC5 
+Viewer --> UC8 
+Viewer --> UC9 
+Viewer --> UC10 
+Viewer --> UC11
+
+Admin-->UC1
+
+
+
+@enduml
