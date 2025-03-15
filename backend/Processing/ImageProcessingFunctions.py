@@ -17,7 +17,7 @@ import cv2 as cv
 import re
 
 # CONSTANTS
-DEBUG = True
+DEBUG = False
 
 COLOR = (0, 255, 0)
 FRAME_SIZE = (1000, 1000)
@@ -355,9 +355,9 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     curr_value = get_score_value(frame, score_coords)
     if prev_value is None:
         prev_value = curr_value
-    elif curr_value > prev_value:
-        print(f"Basket!! @ {timestamp}")
+    elif curr_value != prev_value and curr_value != 0:
         points.append(timestamp)
+        print(f"Basket!! @ {timestamp:.3f} \t Total Baskets: {len(points)}")
         prev_value = curr_value
 
     if DEBUG:
@@ -405,11 +405,13 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
                 prev_value = process_frame(
                     frame, score_coords, prev_value, points, timestamp
                 )
-            cv.imshow("Scoreboard Detection", frame)
+            cv.imshow("Analyzing Match Footage", frame)
             frame_count += 1
 
             if cv.waitKey(1) & 0xFF == ord("q"):
                 break
+
+            print(f"Analyzing Video {timestamp/1000:.2f}", end="\r")
 
     finally:
         video.release()
