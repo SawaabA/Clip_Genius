@@ -349,6 +349,7 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
         None
     -------------------------------------------------------
     """
+    points = []
     video = cv.VideoCapture(file_path)
 
     if not video.isOpened():
@@ -367,6 +368,7 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
                 break
 
             frame = cv.resize(frame, FRAME_SIZE)
+            timestamp = video.get(cv.CAP_PROP_POS_MSEC)
 
             if frame_count % frame_interval == 0:
                 curr_value = get_score_value(frame, score_coords)
@@ -374,6 +376,7 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
                     prev_value = curr_value
                 elif curr_value != prev_value:
                     print(f"Basket!!")
+                    points.append[timestamp]
                     prev_value = curr_value
                 print(curr_value)
             cv.imshow("Scoreboard Detection", frame)
@@ -385,3 +388,4 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
     finally:
         video.release()
         cv.destroyAllWindows()
+    return points
