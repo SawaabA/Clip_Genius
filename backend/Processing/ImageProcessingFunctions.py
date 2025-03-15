@@ -374,7 +374,7 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
                 curr_value = get_score_value(frame, score_coords)
                 if prev_value is None:
                     prev_value = curr_value
-                elif curr_value != prev_value:
+                elif curr_value > prev_value:
                     print(f"Basket!!")
                     points.append(timestamp)
                     prev_value = curr_value
