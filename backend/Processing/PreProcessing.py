@@ -5,12 +5,14 @@ Author:  JD
 ID:      91786
 Uses:    numpy,openCV,pytesseract
 Version:  1.0.8
-__updated__ = Fri Mar 14 2025
+__updated__ = Fri Mar 15 2025
 -------------------------------------------------------
 """
 
 import subprocess
 import os
+
+TEMPFOLDER = "output_videos"
 
 
 def split_video(input_file, segment_time, output_folder, output_pattern):
@@ -41,10 +43,14 @@ def split_video(input_file, segment_time, output_folder, output_pattern):
             "copy",
             "-map",
             "0",
-            "-segment_time",
-            str(segment_time),
             "-f",
             "segment",
+            "-segment_time",
+            str(segment_time),
+            "-force_key_frames",
+            f"expr:gte(t,n_forced*{segment_time})",
+            "-reset_timestamps",
+            "1",
             output_path,
         ]
 
@@ -52,11 +58,3 @@ def split_video(input_file, segment_time, output_folder, output_pattern):
         print("Video split successfully:", result.stdout)
     except subprocess.CalledProcessError as e:
         print("Error occurred:", e.stderr)
-
-
-if __name__ == "__main__":
-    TESTFILE = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/FinalOutput.mp4"
-    )
-
-    split_video(TESTFILE, 10, "output_videos", "output_%03d.mp4")

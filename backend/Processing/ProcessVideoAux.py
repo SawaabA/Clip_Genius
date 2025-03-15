@@ -51,10 +51,12 @@ if __name__ == "__main__":
     VIDEO_PATH = (
         "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
+
     cords = fetch_score_coords(VIDEO_PATH)
     print(cords)
     os.system("clear")
 
-    results = analyze_segment(VIDEO_PATH, cords, 1, "this")
+    results = analyze_segment(VIDEO_PATH, cords, 0)
     print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
+    print(results)
     # cords = process_video(VIDEO_PATH)

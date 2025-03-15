@@ -9,26 +9,53 @@ __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
 """
 
+from ImageProcessingFunctions import analyze_segment
 import threading
 import queue
+import os
 
 
-def worker_function(task_id):
-    result = [f"{task_id}= {i}" for i in range(1, 4)]
-    return result
-
-
-def thread_wrapper(task_id, result_queue):
-    result = worker_function(task_id)
+def thread_wrapper(segment_path, score_coords, segment_number, result_queue):
+    """
+    -------------------------------------------------------
+    Analyzes video segments in parallel using multiple threads to detect score changes.
+    Use: results = analyze_segments_with_threads(segment_folder, score_coords)
+    -------------------------------------------------------
+    Parameters:
+        segment_folder - the directory containing the video segments to analyze (str)
+        score_coords - coordinates (x, y, w, h)
+    Returns:
+        results - a list of results from analyzing the segments (list)
+    -------------------------------------------------------
+    """
+    result = analyze_segment(segment_path, score_coords, segment_number)
     result_queue.put(result)
 
 
-def run_tasks_with_threads(num_tasks):
+def analayze_segments_with_threads(segment_folder, score_coords):
+    """
+    -------------------------------------------------------
+    Analyzes video segments in parallel using multiple threads to detect score changes.
+    Use: results = analyze_segments_with_threads(segment_folder, score_coords)
+    -------------------------------------------------------
+    Parameters:
+        segment_folder - the directory containing the video segments to analyze (str)
+        score_coords - coordinates (x, y, w, h)
+    Returns:
+        results - a list of results
+    -------------------------------------------------------
+    """
     result_queue = queue.Queue()
     threads = []
 
-    for task_id in range(num_tasks):
-        thread = threading.Thread(target=thread_wrapper, args=(task_id, result_queue))
+    segments = os.listdir(os.path.join(segment_folder))
+    for i, segment in enumerate(segments):
+        segment = os.path.join(segment_folder, segment)
+        print(segment)
+        thread = threading.Thread(
+            target=thread_wrapper,
+            args=(segment, score_coords, i, result_queue),
+        )
         thread.start()
         threads.append(thread)
 
@@ -40,9 +67,3 @@ def run_tasks_with_threads(num_tasks):
         results.extend(result_queue.get())
 
     return results
-
-
-if __name__ == "__main__":
-    num_tasks = 10
-    final_results = run_tasks_with_threads(num_tasks)
-    print("Final Results:", final_results)
