@@ -356,7 +356,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     if prev_value is None:
         prev_value = curr_value
     elif curr_value > prev_value:
-        print("Basket!!")
+        print(f"Basket!! @ {timestamp}")
         points.append(timestamp)
         prev_value = curr_value
 

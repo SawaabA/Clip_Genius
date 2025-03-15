@@ -49,7 +49,7 @@ def process_video(file_path: str):
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test2.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
     cords = fetch_score_coords(VIDEO_PATH)
     print(cords)
