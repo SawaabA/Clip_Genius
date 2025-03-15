@@ -31,7 +31,7 @@ HORIZONTAL_ANGLE_THRESHOLD = 10
 SCOREBOARD_Y_RANGE = (0.75, 0.98)  # Expected Area
 
 CONFIG = r"--psm 11 --oem 3"  # for OCR
-CONFIDENCE_THRESHOLD = 10
+CONFIDENCE_THRESHOLD = 60
 
 SKIP_FRAME = 3
 
@@ -195,7 +195,7 @@ def plotscores_on_images(image, scores):
     return image
 
 
-def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESHOLD):
+def find_scores(image: np.ndarray, confidence_threshold: int = 10):
     """
     -------------------------------------------------------
     Finds and extracts coordinates of detected scores ("0") in an image using OCR (Optical Character Recognition).
