@@ -25,7 +25,7 @@ def find_words(image):
     data = pytesseract.image_to_data(image, config=config, output_type=Output.DICT)
     amount_of_boxes = len(data["text"])
     for i in range(amount_of_boxes):
-        if float(data["conf"][i]) > 20:
+        if float(data["conf"][i]) > 40:
             (x, y, w, h) = (
                 data["left"][i],
                 data["top"][i],
