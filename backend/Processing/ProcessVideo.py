@@ -32,11 +32,12 @@ def process_video(file_path: str):
         frame = cv.resize(frame, FRAME_SIZE)
 
         if not abs_cords:
-            abs_cords = extract_scores_location(frame)
+            abs_cords = extract_scores_location_aux(frame)
+
         else:
             frame = plotscores_on_images(frame, abs_cords)
 
-        timestamp = video.get(cv.CAP_PROP_POS_MSEC) / 1000
+        timestamp = video.get(cv.CAP_PROP_POS_MSEC)
         add_timestamp_to_frame(frame, timestamp)
         cv.imshow("Scoreboard Detection", frame)
 
@@ -49,7 +50,8 @@ def process_video(file_path: str):
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test2.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
-    process_video(VIDEO_PATH)
+    cords = process_video(VIDEO_PATH)
+    print(cords)
     print("Stream Ended SUc")

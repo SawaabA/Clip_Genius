@@ -89,7 +89,7 @@ def extract_scoreboard(image: np.ndarray, x1: int, y1: int, x2: int, y2: int):
 
 
 def add_timestamp_to_frame(frame, timestamp):
-    timestamp_text = f"Time: {timestamp:.2f}s"
+    timestamp_text = f"Time: {timestamp/ 1000:.2f}s"
     cv.putText(
         frame,
         timestamp_text,
@@ -159,7 +159,7 @@ def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESH
     return cords
 
 
-def extract_scores_location(frame):
+def extract_scores_location_aux(frame):
     x1, y1, x2, y2 = get_scoreboard_coordinates(frame)
     if x1:
         extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
