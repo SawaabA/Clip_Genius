@@ -300,7 +300,7 @@ def fetch_score_coords(file_path: str):
         if not ret:
             break
         timestamp = video.get(cv.CAP_PROP_POS_MSEC)
-        print(f"Searching For Score Box: {timestamp/1000}", end="\r")
+        print(f"Searching For Score Box: {timestamp/1000:.3f}", end="\r")
         frame = cv.resize(frame, FRAME_SIZE)
         abs_cords = extract_scores_location_aux(frame)
     video.release()
@@ -359,7 +359,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
         prev_value = curr_value
     elif curr_value != prev_value and curr_value != 0:
         points.append(timestamp)
-        print(f"Basket!! @ {timestamp:.3f} \t Total Baskets: {len(points)}")
+        print(f"Basket!! @ {timestamp/1000:.3f} \t Total Baskets: {len(points)}")
         prev_value = curr_value
 
     if DEBUG:
@@ -401,9 +401,7 @@ def analyze_segment(file_path, score_coords, segment_number):
                 break
 
             frame = cv.resize(frame, FRAME_SIZE)
-            timestamp = (segment_number * SEGMENT_SIZE * 1000) + video.get(
-                cv.CAP_PROP_POS_MSEC
-            )
+            timestamp = (segment_number * 1000) + video.get(cv.CAP_PROP_POS_MSEC)
 
             if frame_count % frame_interval == 0:
                 prev_value = process_frame(

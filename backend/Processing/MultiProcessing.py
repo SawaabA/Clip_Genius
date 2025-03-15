@@ -10,12 +10,13 @@ __updated__ = Fri Mar 14 2025
 """
 
 from ImageProcessingFunctions import analyze_segment
+from PreProcessing import get_video_duration
 import threading
 import queue
 import os
 
 
-def thread_wrapper(segment_path, score_coords, segment_number, result_queue):
+def thread_wrapper(segment_path, score_coords, duration, result_queue):
     """
     -------------------------------------------------------
     Analyzes video segments in parallel using multiple threads to detect score changes.
@@ -28,7 +29,7 @@ def thread_wrapper(segment_path, score_coords, segment_number, result_queue):
         results - a list of results from analyzing the segments (list)
     -------------------------------------------------------
     """
-    result = analyze_segment(segment_path, score_coords, segment_number)
+    result = analyze_segment(segment_path, score_coords, duration)
     result_queue.put(result)
 
 
@@ -47,14 +48,16 @@ def analayze_segments_with_threads(segment_folder, score_coords):
     """
     result_queue = queue.Queue()
     threads = []
+    duration = 0
 
     segments = os.listdir(os.path.join(segment_folder))
     for i, segment in enumerate(segments):
         segment = os.path.join(segment_folder, segment)
-        print(segment)
+        duration += get_video_duration(segment)
+        print(f"{i} - {segment} @ {duration}")
         thread = threading.Thread(
             target=thread_wrapper,
-            args=(segment, score_coords, i, result_queue),
+            args=(segment, score_coords, duration, result_queue),
         )
         thread.start()
         threads.append(thread)

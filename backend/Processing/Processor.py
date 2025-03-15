@@ -11,9 +11,16 @@ __updated__ = Fri Mar 14 2025
 
 import os
 from ImageProcessingFunctions import *
+from PreProcessing import process_results
+from MultiProcessing import analayze_segments_with_threads
+from PreProcessing import split_video
+from time import sleep
+import os
+
+TEMPFOLDER = "output_videos"
 
 
-def process_video(file_path: str):
+def PROCESS_VIDEO(file_path: str):
     video = cv.VideoCapture(file_path)
     if not video.isOpened():
         print("Error: Could not open video file.")
@@ -47,16 +54,26 @@ def process_video(file_path: str):
     cv.destroyAllWindows()
 
 
+def PROCESS_FILE(filepath):
+    cords = fetch_score_coords(filepath)
+    results = analyze_segment(filepath, cords, 0)
+    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
+    process_results(filepath, results)
+
+
+def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
+    cords = fetch_score_coords(filepath)
+    print(cords)
+    split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
+    sleep(1)
+    results = analayze_segments_with_threads(tempfolder, cords)
+    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
+    os.rmdir(tempfolder)
+    process_results(filepath, results)
+
+
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test5.mov"
     )
-
-    cords = fetch_score_coords(VIDEO_PATH)
-    print(cords)
-    os.system("clear")
-
-    results = analyze_segment(VIDEO_PATH, cords, 0)
-    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
-    print(results)
-    # cords = process_video(VIDEO_PATH)
+    PROCESS_FILE(VIDEO_PATH)
