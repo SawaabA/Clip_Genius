@@ -5,12 +5,52 @@ Author:  JD
 ID:      91786
 Uses:    numpy,openCV,pytesseract
 Version:  1.0.8
-__updated__ = Fri Mar 14 2025
+__updated__ = Fri Mar 15 2025
 -------------------------------------------------------
 """
 
 import subprocess
+import time
 import os
+
+# CONSTANTS
+TEMPFOLDER = "TEMPFOLDER"
+PRE_TIME = 10
+POST_TIME = 5
+import json
+
+
+def format_time(milliseconds):
+    seconds = milliseconds / 1000
+    return time.strftime("%H:%M:%S", time.gmtime(seconds))
+
+
+def get_video_duration(video_path):
+    """
+    -------------------------------------------------------
+    Retrieves the duration of a video file using FFprobe.
+    Use: duration = get_video_duration(video_path)
+    -------------------------------------------------------
+    Parameters:
+        video_path - the path to the video file (str)
+    Returns:
+        duration - the duration of the video in seconds (float)
+    -------------------------------------------------------
+    """
+    command = [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "json",
+        video_path,
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    metadata = json.loads(result.stdout)
+    duration = float(metadata["format"]["duration"])
+    return duration
 
 
 def split_video(input_file, segment_time, output_folder, output_pattern):
@@ -41,10 +81,14 @@ def split_video(input_file, segment_time, output_folder, output_pattern):
             "copy",
             "-map",
             "0",
-            "-segment_time",
-            str(segment_time),
             "-f",
             "segment",
+            "-segment_time",
+            str(segment_time),
+            "-force_key_frames",
+            f"expr:gte(t,n_forced*{segment_time})",
+            "-reset_timestamps",
+            "1",
             output_path,
         ]
 
@@ -54,9 +98,74 @@ def split_video(input_file, segment_time, output_folder, output_pattern):
         print("Error occurred:", e.stderr)
 
 
-if __name__ == "__main__":
-    TESTFILE = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/FinalOutput.mp4"
-    )
+def create_clip(
+    input_file,
+    start_time,
+    end_time,
+    output_folder,
+    output_filename,
+):
+    """
+    -------------------------------------------------------
+    Creates a final video clip by extracting a segment from an input video file using FFmpeg.
+    Use: create_clip(input_file, start_time, end_time, output_folder, output_pattern)
+    -------------------------------------------------------
+    Parameters:
+        input_file - the path to the input video file (str)
+        start_time - the start time of the segment to extract (str, in HH:MM:SS format)
+        end_time - the end time of the segment to extract (str, in HH:MM:SS format)
+        output_folder - the directory where the output clip will be saved (str)
+        output_filename - the naming pattern for the output clip
+    Returns:
+        None
+    -------------------------------------------------------
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
-    split_video(TESTFILE, 10, "output_videos", "output_%03d.mp4")
+    output_path = os.path.join(output_folder, output_filename)
+
+    command = [
+        "ffmpeg",
+        "-i",
+        input_file,
+        "-ss",
+        start_time,
+        "-to",
+        end_time,
+        "-c",
+        "copy",
+        output_path,
+    ]
+    subprocess.run(command, check=True)
+
+
+def process_results(
+    source_file,
+    results,
+    output_folder="OUTPUT",
+    pre_time=PRE_TIME,
+    post_time=POST_TIME,
+):
+    """
+    -------------------------------------------------------
+    Processes a list of timestamps to create video clips around each timestamp using a source video file.
+    Use: process_results(source_file, results, output_folder, pre_time, post_time)
+    -------------------------------------------------------
+    Parameters:
+        source_file - the path to the source video file (str)
+        results - a list of timestamps (in milliseconds) to create clips around (list of int)
+        output_folder - the directory where the output clips will be saved (str, default="OUTPUT")
+        pre_time - the time (in seconds) to include before each timestamp (float or int, default=PRE_TIME)
+        post_time - the time (in seconds) to include after each timestamp (float or int, default=POST_TIME)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
+    for i, result in enumerate(results):
+        result = int(result)
+        start_time = format_time(max(result - (pre_time * 1000), 0))
+        end_time = format_time(result + (post_time * 1000))
+        create_clip(
+            source_file, start_time, end_time, output_folder, f"Final_clip_{i}.mp4"
+        )

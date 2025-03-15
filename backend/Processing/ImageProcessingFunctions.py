@@ -19,6 +19,8 @@ import re
 # CONSTANTS
 DEBUG = False
 
+SEGMENT_SIZE = 30
+
 COLOR = (0, 255, 0)
 FRAME_SIZE = (1000, 1000)
 
@@ -298,7 +300,7 @@ def fetch_score_coords(file_path: str):
         if not ret:
             break
         timestamp = video.get(cv.CAP_PROP_POS_MSEC)
-        print(f"Searching For Score Box: {timestamp/1000}", end="\r")
+        print(f"Searching For Score Box: {timestamp/1000:.3f}", end="\r")
         frame = cv.resize(frame, FRAME_SIZE)
         abs_cords = extract_scores_location_aux(frame)
     video.release()
@@ -357,7 +359,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
         prev_value = curr_value
     elif curr_value != prev_value and curr_value != 0:
         points.append(timestamp)
-        print(f"Basket!! @ {timestamp:.3f} \t Total Baskets: {len(points)}")
+        print(f"Basket!! @ {timestamp/1000:.3f} \t Total Baskets: {len(points)}")
         prev_value = curr_value
 
     if DEBUG:
@@ -365,7 +367,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     return prev_value
 
 
-def analyze_segment(file_path, score_coords, segment_number, masterfile):
+def analyze_segment(file_path, score_coords, segment_number):
     """
     -------------------------------------------------------
     Analyzes a video segment to detect changes in the score value and displays the video with real-time score detection.
@@ -399,21 +401,21 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
                 break
 
             frame = cv.resize(frame, FRAME_SIZE)
-            timestamp = video.get(cv.CAP_PROP_POS_MSEC)
+            timestamp = (segment_number * 1000) + video.get(cv.CAP_PROP_POS_MSEC)
 
             if frame_count % frame_interval == 0:
                 prev_value = process_frame(
                     frame, score_coords, prev_value, points, timestamp
                 )
-            cv.imshow("Analyzing Match Footage", frame)
+            # cv.imshow("Analyzing Match Footage", frame)
             frame_count += 1
 
             if cv.waitKey(1) & 0xFF == ord("q"):
                 break
 
-            print(f"Analyzing Video {timestamp/1000:.2f}", end="\r")
+            print(f"Analyzing Video {segment_number} - {timestamp/1000:.2f}", end="\r")
 
     finally:
         video.release()
-        cv.destroyAllWindows()
+        # cv.destroyAllWindows()
     return points
