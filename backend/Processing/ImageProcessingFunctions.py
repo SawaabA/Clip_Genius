@@ -17,6 +17,8 @@ import cv2 as cv
 import re
 
 # CONSTANTS
+DEBUG = False
+
 COLOR = (0, 255, 0)
 FRAME_SIZE = (1000, 1000)
 
@@ -31,7 +33,7 @@ HORIZONTAL_ANGLE_THRESHOLD = 10
 SCOREBOARD_Y_RANGE = (0.75, 0.98)  # Expected Area
 
 CONFIG = r"--psm 11 --oem 3"  # for OCR
-CONFIDENCE_THRESHOLD = 10
+CONFIDENCE_THRESHOLD = 60
 
 SKIP_FRAME = 3
 
@@ -195,7 +197,7 @@ def plotscores_on_images(image, scores):
     return image
 
 
-def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESHOLD):
+def find_scores(image: np.ndarray, confidence_threshold: int = 10):
     """
     -------------------------------------------------------
     Finds and extracts coordinates of detected scores ("0") in an image using OCR (Optical Character Recognition).
@@ -334,6 +336,35 @@ def get_score_value(frame: np.ndarray, coords: list[tuple[int, int, int, int]]):
     return int(digits)
 
 
+def process_frame(frame, score_coords, prev_value, points, timestamp):
+    """
+    -------------------------------------------------------
+    Processes a video frame to detect changes in the score value and records timestamps of score updates.
+    Use: updated_value = process_frame(frame, score_coords, prev_value, points, timestamp)
+    -------------------------------------------------------
+    Parameters:
+        frame - the current video frame to process (numpy.ndarray)
+        score_coords - coordinates (x, y, w, h)
+        prev_value - the previous score value
+        points - a list to store timestamps when a score update (basket) is detected (list)
+        timestamp - the current timestamp of the frame (float)
+    Returns:
+        updated_value - the updated score value after processing the current frame (int)
+    -------------------------------------------------------
+    """
+    curr_value = get_score_value(frame, score_coords)
+    if prev_value is None:
+        prev_value = curr_value
+    elif curr_value != prev_value and curr_value != 0:
+        points.append(timestamp)
+        print(f"Basket!! @ {timestamp:.3f} \t Total Baskets: {len(points)}")
+        prev_value = curr_value
+
+    if DEBUG:
+        print(curr_value)
+    return prev_value
+
+
 def analyze_segment(file_path, score_coords, segment_number, masterfile):
     """
     -------------------------------------------------------
@@ -371,19 +402,16 @@ def analyze_segment(file_path, score_coords, segment_number, masterfile):
             timestamp = video.get(cv.CAP_PROP_POS_MSEC)
 
             if frame_count % frame_interval == 0:
-                curr_value = get_score_value(frame, score_coords)
-                if prev_value is None:
-                    prev_value = curr_value
-                elif curr_value > prev_value:
-                    print(f"Basket!!")
-                    points.append(timestamp)
-                    prev_value = curr_value
-                print(curr_value)
-            cv.imshow("Scoreboard Detection", frame)
+                prev_value = process_frame(
+                    frame, score_coords, prev_value, points, timestamp
+                )
+            cv.imshow("Analyzing Match Footage", frame)
             frame_count += 1
 
             if cv.waitKey(1) & 0xFF == ord("q"):
                 break
+
+            print(f"Analyzing Video {timestamp/1000:.2f}", end="\r")
 
     finally:
         video.release()

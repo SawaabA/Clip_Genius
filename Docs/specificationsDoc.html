@@ -253,6 +253,9 @@
         </table>
 
         <h2>Score Detection</h2>
+        <p>This script, ImageProcessingFunctions, is designed for image and video processing, specifically for detecting
+            and analyzing scoreboards in video frames. It uses a combination of computer vision techniques (OpenCV) and
+            Optical Character Recognition (OCR) via Tesseract to extract and process score information.</p>
         <h4>Work Flow</h4>
         <ol start="1">
             <li>
@@ -291,19 +294,88 @@
                     </li>
                 </ul>
             </li>
+        </ol>
+
+        <h4>Functions</h4>
+        <ol start="1">
             <li>
-                <p><strong>Visualization</strong>:</p>
+                <p><strong><code>get_scoreboard_coordinates(image)</code></strong>:</p>
                 <ul>
                     <li>
-                        <p>The video is displayed with the detected scoreboard and score values overlaid.</p>
+                        <p>Detects the scoreboard region in an image using edge and line detection.</p>
                     </li>
                     <li>
-                        <p>Timestamps are added to the frames for reference.</p>
+                        <p>Returns the bounding box coordinates of the scoreboard.</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>extract_scoreboard(image, x1, y1, x2, y2)</code></strong>:</p>
+                <ul>
+                    <li>
+                        <p>Extracts the scoreboard region from the image using the provided bounding box coordinates.
+                        </p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>find_scores(image, confidence_threshold)</code></strong>:</p>
+                <ul>
+                    <li>
+                        <p>Uses OCR to detect and extract coordinates of numeric scores (e.g., "0") in the scoreboard
+                            region.
+                        </p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>fetch_score_coords(file_path)</code></strong>:</p>
+                <ul>
+                    <li>
+                        <p>Processes a video file to detect and extract the absolute coordinates of scores.</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>get_score_value(frame, coords)</code></strong>:</p>
+                <ul>
+                    <li>
+                        <p>Extracts the numeric score value from a frame using OCR based on the provided coordinates.
+                        </p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>process_frame(frame, score_coords, prev_value, points, timestamp)</code></strong>:</p>
+                <ul>
+                    <li>
+                        <p>Processes a video frame to detect changes in the score value and records timestamps of score
+                            updates.
+                        </p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong><code>analyze_segment(file_path, score_coords, segment_number, masterfile)</code></strong>:
+                </p>
+                <ul>
+                    <li>
+                        <p>Analyzes a video segment to detect score changes and displays the video with real-time score
+                            detection.</p>
                     </li>
                 </ul>
             </li>
         </ol>
 
+
+        <h4>Test Results</h4>
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+            <img src="Images/TestImage1.png" alt="">
+            <img src="Images/TestImage2.png" alt="">
+            <img src="Images/TestImage3.png" alt="">
+            <img src="Images/TestImage4.png" alt="">
+
+        </div>
     </main>
 
     <script src="../frontend/static/ReportsFormatter.js"></script>

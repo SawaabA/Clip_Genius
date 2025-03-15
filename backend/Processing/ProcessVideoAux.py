@@ -9,12 +9,12 @@ __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
 """
 
+import os
 from ImageProcessingFunctions import *
 
 
 def process_video(file_path: str):
     video = cv.VideoCapture(file_path)
-
     if not video.isOpened():
         print("Error: Could not open video file.")
         return
@@ -27,11 +27,15 @@ def process_video(file_path: str):
         frame = cv.resize(frame, FRAME_SIZE)
 
         if not abs_cords:
-            abs_cords = extract_scores_location_aux(frame)
-
+            x1, y1, x2, y2 = get_scoreboard_coordinates(frame)
+            if x1:
+                extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
+                # cv.imshow("Scoreboard Detection", extracted_image)
+                score_cords = find_scores(extracted_image)
+                abs_cords = convert_to_abs_coordinates(x1, y1, score_cords)
         else:
             frame = plotscores_on_images(frame, abs_cords)
-
+            cv.rectangle(frame, (x1, y1), (x2, y2), COLOR, 2)
         timestamp = video.get(cv.CAP_PROP_POS_MSEC)
         add_timestamp_to_frame(frame, timestamp)
         cv.imshow("Scoreboard Detection", frame)
@@ -49,7 +53,8 @@ if __name__ == "__main__":
     )
     cords = fetch_score_coords(VIDEO_PATH)
     print(cords)
-    print("Stage 2")
+    os.system("clear")
+
     results = analyze_segment(VIDEO_PATH, cords, 1, "this")
-    print(results)
+    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
     # cords = process_video(VIDEO_PATH)
