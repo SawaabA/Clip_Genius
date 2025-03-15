@@ -82,16 +82,16 @@ function loadStylesheet(href) {
 
 function updateCSS_ALL() {
     updateCSS(['h1'], ['text-3xl', 'font-bold']);
-    updateCSS(['h2'], ['text-2xl', 'font-semibold', 'mt-8']);
-    updateCSS(['h3'], ['text-lg', 'font-semibold', 'mt-5']);
-    updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4']);
-    updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3']);
-    updateCSS(['h6'], ['text-xs', 'font-semibold', 'mt-2']);
+    updateCSS(['h2'], ['text-2xl', 'font-semibold', 'mt-8', 'mb-1']);
+    updateCSS(['h3'], ['text-lg', 'font-semibold', 'mt-5', 'mb-1']);
+    updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4', 'mb-1']);
+    updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3', 'mb-1']);
+    updateCSS(['h6'], ['text-xs', 'font-semibold', 'mt-2', 'mb-1']);
     updateCSS(['p'], ['mt-1', 'text-md', 'text-muted-foreground', 'text-justify']);
     updateCSS(['ul'], ['list-disc', 'pl-10']);
     updateCSS(['ol'], ['list-decimal', 'pl-10']);
     updateCSS(['li'], ['m-0', 'p-0']);
-    updateCSS(['table'], ['table', 'table-sm', 'mb-4']);
+    updateCSS(['table'], ['table', 'table-sm', 'mb-4', "mx-auto"]);
     updateCSS(['thead'], ['bg-gray-100']);
     updateCSS(['th'], ['px-4', 'py-2', 'text-left', 'font-bold']);
     updateCSS(['td'], ['px-4', 'py-2', 'border', 'border-gray-200']);

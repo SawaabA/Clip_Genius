@@ -60,6 +60,197 @@
 
 
         <h2>API Design</h2>
+        <p>The API endpoints for managing a sports-related database. The API allows users to perform basic operations
+            like creating, reading, updating, and deleting data for sports, users, matches, videos, tags, comments, and
+            ratings.</p>
+
+        <h3>API Endpoints</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th><strong>Resource</strong></th>
+                    <th><strong>HTTP Method</strong></th>
+                    <th><strong>Endpoint</strong></th>
+                    <th><strong>Description</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Sports</strong></td>
+                    <td>GET</td>
+                    <td><code>/sports</code></td>
+                    <td>Get all sports.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>GET</td>
+                    <td><code>/sports/{sportId}</code></td>
+                    <td>Get a single sport by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/sports</code></td>
+                    <td>Create a new sport.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PUT</td>
+                    <td><code>/sports/{sportId}</code></td>
+                    <td>Update a sport by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/sports/{sportId}</code></td>
+                    <td>Delete a sport by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Users</strong></td>
+                    <td>GET</td>
+                    <td><code>/users</code></td>
+                    <td>Get all users.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>GET</td>
+                    <td><code>/users/{userId}</code></td>
+                    <td>Get a single user by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/users</code></td>
+                    <td>Create a new user.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PUT</td>
+                    <td><code>/users/{userId}</code></td>
+                    <td>Update a user by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/users/{userId}</code></td>
+                    <td>Delete a user by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Matches</strong></td>
+                    <td>GET</td>
+                    <td><code>/matches</code></td>
+                    <td>Get all matches.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>GET</td>
+                    <td><code>/matches/{matchId}</code></td>
+                    <td>Get a single match by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/matches</code></td>
+                    <td>Create a new match.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PUT</td>
+                    <td><code>/matches/{matchId}</code></td>
+                    <td>Update a match by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/matches/{matchId}</code></td>
+                    <td>Delete a match by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Videos</strong></td>
+                    <td>GET</td>
+                    <td><code>/videos</code></td>
+                    <td>Get all videos.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>GET</td>
+                    <td><code>/videos/{videoId}</code></td>
+                    <td>Get a single video by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/videos</code></td>
+                    <td>Create a new video.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PUT</td>
+                    <td><code>/videos/{videoId}</code></td>
+                    <td>Update a video by ID.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/videos/{videoId}</code></td>
+                    <td>Delete a video by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Tags</strong></td>
+                    <td>GET</td>
+                    <td><code>/tags</code></td>
+                    <td>Get all tags.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/tags</code></td>
+                    <td>Create a new tag.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/tags/{tagId}</code></td>
+                    <td>Delete a tag by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Comments</strong></td>
+                    <td>GET</td>
+                    <td><code>/videos/{videoId}/comments</code></td>
+                    <td>Get all comments for a video.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/videos/{videoId}/comments</code></td>
+                    <td>Create a new comment for a video.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/comments/{commentId}</code></td>
+                    <td>Delete a comment by ID.</td>
+                </tr>
+                <tr>
+                    <td><strong>Ratings</strong></td>
+                    <td>GET</td>
+                    <td><code>/videos/{videoId}/ratings</code></td>
+                    <td>Get all ratings for a video.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>POST</td>
+                    <td><code>/videos/{videoId}/ratings</code></td>
+                    <td>Create a new rating for a video.</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>DELETE</td>
+                    <td><code>/ratings/{ratingId}</code></td>
+                    <td>Delete a rating by ID.</td>
+                </tr>
+            </tbody>
+        </table>
 
     </main>
 
