@@ -252,6 +252,58 @@
             </tbody>
         </table>
 
+        <h2>Score Detection</h2>
+        <h4>Work Flow</h4>
+        <ol start="1">
+            <li>
+                <p><strong>Scoreboard Detection</strong>:</p>
+                <ul>
+                    <li>
+                        <p>The scoreboard region is detected using edge detection and Hough Line Transform.</p>
+                    </li>
+                    <li>
+                        <p>The coordinates of the scoreboard are extracted.</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>Score Extraction</strong>:</p>
+                <ul>
+                    <li>
+                        <p>OCR is used to detect the numeric score ("0") within the scoreboard region.</p>
+                    </li>
+                    <li>
+                        <p>The coordinates of the detected scores are converted to absolute coordinates.</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>Video Processing</strong>:</p>
+                <ul>
+                    <li>
+                        <p>The video is processed frame by frame.</p>
+                    </li>
+                    <li>
+                        <p>The score value is extracted from each frame using OCR.</p>
+                    </li>
+                    <li>
+                        <p>Changes in the score value are detected and logged.</p>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <p><strong>Visualization</strong>:</p>
+                <ul>
+                    <li>
+                        <p>The video is displayed with the detected scoreboard and score values overlaid.</p>
+                    </li>
+                    <li>
+                        <p>Timestamps are added to the frames for reference.</p>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+
     </main>
 
     <script src="../frontend/static/ReportsFormatter.js"></script>

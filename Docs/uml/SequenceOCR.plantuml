@@ -1,0 +1,86 @@
+@startuml SequenceDiagramOCR
+title Scoreboard Detection and Analysis Sequence Diagram
+
+actor User
+participant "fetch_score_coords" as Fetch
+participant "VideoCapture" as Video
+participant "get_scoreboard_coordinates" as GetCoords
+participant "extract_scoreboard" as Extract
+participant "find_scores" as FindScores
+participant "convert_to_abs_coordinates" as Convert
+participant "analyze_segment" as Analyze
+participant "get_score_value" as GetValue
+
+participant "OpenCV" as CV
+
+User -> Fetch: fetch_score_coords(file_path)
+activate Fetch
+Fetch -> Video: open(file_path)
+activate Video
+Video --> Fetch: video_stream
+Fetch -> Analyze: analyze_segment(file_path, score_coords, segment_number, masterfile)
+activate Analyze
+Analyze -> Video: read_frame()
+activate Video
+Video --> Analyze: frame
+Analyze -> GetCoords: get_scoreboard_coordinates(frame)
+activate GetCoords
+GetCoords -> CV: cvtColor(frame, COLOR_BGR2GRAY)
+activate CV
+CV --> GetCoords: gray_image
+GetCoords -> CV: Canny(gray_image, THRESHOLD1, THRESHOLD2)
+activate CV
+CV --> GetCoords: edges
+GetCoords -> CV: HoughLinesP(edges, ...)
+activate CV
+CV --> GetCoords: lines
+GetCoords --> Analyze: (x1, y1, x2, y2)
+deactivate GetCoords
+Analyze -> Extract: extract_scoreboard(frame, x1, y1, x2, y2)
+activate Extract
+Extract --> Analyze: scoreboard_image
+deactivate Extract
+Analyze -> FindScores: find_scores(scoreboard_image)
+activate FindScores
+FindScores -> CV: pytesseract.image_to_data(scoreboard_image, ...)
+activate CV
+CV --> FindScores: OCR_data
+FindScores --> Analyze: score_cords
+deactivate FindScores
+Analyze -> Convert: convert_to_abs_coordinates(x1, y1, score_cords)
+activate Convert
+Convert --> Analyze: abs_cords
+deactivate Convert
+Analyze -> GetValue: get_score_value(frame, abs_cords)
+activate GetValue
+GetValue -> CV: cvtColor(score_region, COLOR_BGR2GRAY)
+activate CV
+CV --> GetValue: gray_score_region
+GetValue -> CV: resize(gray_score_region, ...)
+activate CV
+CV --> GetValue: resized_image
+GetValue -> CV: GaussianBlur(resized_image, ...)
+activate CV
+CV --> GetValue: blurred_image
+GetValue -> CV: threshold(blurred_image, ...)
+activate CV
+CV --> GetValue: binary_image
+GetValue -> CV: pytesseract.image_to_string(binary_image, ...)
+activate CV
+CV --> GetValue: extracted_text
+GetValue --> Analyze: score_value
+deactivate GetValue
+Analyze -> CV: putText(frame, score_value, ...)
+activate CV
+CV --> Analyze: annotated_frame
+deactivate CV
+Analyze -> CV: imshow("Scoreboard Detection", annotated_frame)
+activate CV
+CV --> Analyze: display_frame
+deactivate CV
+Analyze --> Fetch: abs_cords
+deactivate Analyze
+Fetch --> User: abs_cords
+deactivate Fetch
+
+@enduml
