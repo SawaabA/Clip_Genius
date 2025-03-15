@@ -1,3 +1,12 @@
+from pytesseract import Output
+import pytesseract
+import cv2 as cv
+
+
+config = r"--psm 12 --oem 3"
+COLOR = (0, 255, 0)
+
+
 def find_individual_chars(image):
     height, widht, _ = image.shape
     height, widht
