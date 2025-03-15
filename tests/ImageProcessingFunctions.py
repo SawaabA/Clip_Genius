@@ -24,10 +24,10 @@ MIN_LINE_LENGTH = 150
 MAX_LINE_GAP = 10
 HORIZONTAL_ANGLE_THRESHOLD = 10
 
-SCOREBOARD_Y_RANGE = (0.75, 0.90)  # Expected Area
+SCOREBOARD_Y_RANGE = (0.75, 0.98)  # Expected Area
 
 CONFIG = r"--psm 11 --oem 3"  # for OCR
-CONFIDENCE_THRESHOLD = 40
+CONFIDENCE_THRESHOLD = 10
 
 
 COLOR = (0, 255, 0)
@@ -164,6 +164,8 @@ def extract_scores_location(frame):
     if x1:
         extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
         score_cords = find_scores(extracted_image)
+        # extracted_image = plotscores_on_images(extracted_image, score_cords)
+        # cv.imshow("Scoreboard Detection", extracted_image)
         abs_cords = convert_to_abs_coordinates(x1, y1, score_cords)
         return abs_cords
     return None
