@@ -34,6 +34,22 @@ CONFIDENCE_THRESHOLD = 10
 
 
 def get_scoreboard_coordinates(image: np.ndarray) -> tuple[int, int, int, int]:
+    """
+    -------------------------------------------------------
+    Detects and extracts the bounding box coordinates of a scoreboard region in an image.
+    Use: x_min, y_min, x_max, y_max = get_scoreboard_coordinates(image)
+    -------------------------------------------------------
+    Parameters:
+        image - input image in BGR format as a NumPy array (np.ndarray)
+    Returns:
+        x_min - x-coordinate of the top-left corner of the bounding box (int)
+        y_min - y-coordinate of the top-left corner of the bounding box (int)
+        x_max - x-coordinate of the bottom-right corner of the bounding box (int)
+        y_max - y-coordinate of the bottom-right corner of the bounding box (int)
+        If no scoreboard is detected, returns the coordinates of the entire image.
+        If an error occurs, returns (None, None, None, None).
+    -------------------------------------------------------
+    """
     try:
         gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
         edges = cv.Canny(
@@ -85,10 +101,37 @@ def get_scoreboard_coordinates(image: np.ndarray) -> tuple[int, int, int, int]:
 
 
 def extract_scoreboard(image: np.ndarray, x1: int, y1: int, x2: int, y2: int):
+    """
+    -------------------------------------------------------
+    Extracts a region of interest (ROI) from an image using the provided bounding box coordinates.
+    Use: scoreboard_image = extract_scoreboard(image, x1, y1, x2, y2)
+    -------------------------------------------------------
+    Parameters:
+        image - input image as a NumPy array (np.ndarray)
+        x1 - x-coordinate of the top-left corner of the bounding box (int)
+        y1 - y-coordinate of the top-left corner of the bounding box (int)
+        x2 - x-coordinate of the bottom-right corner of the bounding box (int)
+        y2 - y-coordinate of the bottom-right corner of the bounding box (int)
+    Returns:
+        scoreboard_image - the extracted region of interest as a NumPy array (np.ndarray)
+    -------------------------------------------------------
+    """
     return image[y1:y2, x1:x2]
 
 
 def add_timestamp_to_frame(frame, timestamp):
+    """
+    -------------------------------------------------------
+    Adds a timestamp to a video frame.
+    Use: add_timestamp_to_frame(frame, timestamp)
+    -------------------------------------------------------
+    Parameters:
+        frame - the video frame as a NumPy array (np.ndarray)
+        timestamp - the timestamp in milliseconds (int)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     timestamp_text = f"Time: {timestamp/ 1000:.2f}s"
     cv.putText(
         frame,
@@ -103,6 +146,18 @@ def add_timestamp_to_frame(frame, timestamp):
 
 
 def is_overlap(rect1, rect2):
+    """
+    -------------------------------------------------------
+    Checks if two rectangles overlap.
+    Use: overlap = is_overlap(rect1, rect2)
+    -------------------------------------------------------
+    Parameters:
+        rect1 - coordinates of the first rectangle as a tuple
+        rect2 - coordinates of the second rectangle as a tuple
+    Returns:
+        overlap - True if the rectangles overlap, False otherwise (bool)
+    -------------------------------------------------------
+    """
     x1, y1, w1, h1 = rect1
     x2, y2, w2, h2 = rect2
 
@@ -118,6 +173,18 @@ def is_overlap(rect1, rect2):
 
 
 def plotscores_on_images(image, scores):
+    """
+    -------------------------------------------------------
+    Draws rectangles on an image based on the provided scores.
+    Use: annotated_image = plotscores_on_images(image, scores)
+    -------------------------------------------------------
+    Parameters:
+        image - the input image as a NumPy array (np.ndarray)
+        scores - a list of rectangles, where each rectangle is represented as a tuple (x, y, width, height)
+    Returns:
+        annotated_image - the image with rectangles drawn on it (np.ndarray)
+    -------------------------------------------------------
+    """
     for s in scores:
         image = cv.rectangle(
             image, (s[0], s[1]), (s[0] + s[2], s[1] + s[3]), COLOR, thickness=2
@@ -126,12 +193,19 @@ def plotscores_on_images(image, scores):
 
 
 def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESHOLD):
-    annotated_image = image.copy()
-
-    # Perform OCR
-    data = pytesseract.image_to_data(
-        annotated_image, config=CONFIG, output_type=Output.DICT
-    )
+    """
+    -------------------------------------------------------
+    Finds and extracts coordinates of detected scores ("0") in an image using OCR (Optical Character Recognition).
+    Use: score_coordinates = find_scores(image, confidence_threshold)
+    -------------------------------------------------------
+    Parameters:
+        image - the input image as a NumPy array (np.ndarray)
+        confidence_threshold - the minimum confidence level for OCR detection (int, default = CONFIDENCE_THRESHOLD)
+    Returns:
+        cords - a list of tuples
+    -------------------------------------------------------
+    """
+    data = pytesseract.image_to_data(image, config=CONFIG, output_type=Output.DICT)
     cords = []
     for i in range(len(data["text"])):
         text, conf = data["text"][i], float(data["conf"][i])
@@ -144,11 +218,24 @@ def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESH
                     data["height"][i],
                 )
             )
-
     return cords
 
 
 def convert_to_abs_coordinates(x1, y1, scores):
+    """
+    -------------------------------------------------------
+    Converts relative coordinates of scores to absolute coordinates based on a reference point (x1, y1).
+    Use: abs_coordinates = convert_to_abs_coordinates(x1, y1, scores)
+    -------------------------------------------------------
+    Parameters:
+        x1 - the x-coordinate of the reference point (int)
+        y1 - the y-coordinate of the reference point (int)
+        scores - a list of two tuples
+    Returns:
+        absolute_coordinates - a list
+        If the input list does not contain exactly two scores or if the scores overlap, returns None.
+    -------------------------------------------------------
+    """
     if not len(scores) == 2:
         return None
     absolute_coordinates = []
@@ -160,6 +247,18 @@ def convert_to_abs_coordinates(x1, y1, scores):
 
 
 def extract_scores_location_aux(frame):
+    """
+    -------------------------------------------------------
+    Extracts the absolute coordinates of scores from a frame by detecting the scoreboard region and performing OCR.
+    Use: score_locations = extract_scores_location_aux(frame)
+    -------------------------------------------------------
+    Parameters:
+        frame - the input frame as a NumPy array (np.ndarray)
+    Returns:
+        abs_cords - a list of tuples,
+        If the scoreboard region is not detected or no valid scores are found, returns None.
+    -------------------------------------------------------
+    """
     x1, y1, x2, y2 = get_scoreboard_coordinates(frame)
     if x1:
         extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
@@ -172,7 +271,18 @@ def extract_scores_location_aux(frame):
 
 
 def fetch_score_coords(file_path: str):
-    """Processes video and detects scoreboard in frames."""
+    """
+    -------------------------------------------------------
+    Processes a video file to detect and extract the absolute coordinates of scores by analyzing frames.
+    Use: score_coordinates = fetch_score_coords(file_path)
+    -------------------------------------------------------
+    Parameters:
+        file_path - the path to the video file (str)
+    Returns:
+        abs_cords - a list of tuples, where each tuple contains the absolute coordinates of a score in the format (x, y, width, height) (list[tuple[int, int, int, int]])
+        If no scores are detected or the video file cannot be opened, returns None.
+    -------------------------------------------------------
+    """
     video = cv.VideoCapture(file_path)
     if not video.isOpened():
         print("Error: Could not open video file.")

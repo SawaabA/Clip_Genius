@@ -48,6 +48,6 @@ if __name__ == "__main__":
     VIDEO_PATH = (
         "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
-    # cords = fetch_score_coords(VIDEO_PATH)
-    cords = process_video(VIDEO_PATH)
+    cords = fetch_score_coords(VIDEO_PATH)
+    # cords = process_video(VIDEO_PATH)
     print(cords)
