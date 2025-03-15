@@ -14,6 +14,7 @@ from pytesseract import Output
 import pytesseract
 import numpy as np
 import cv2 as cv
+import re
 
 # CONSTANTS
 COLOR = (0, 255, 0)
@@ -292,7 +293,40 @@ def fetch_score_coords(file_path: str):
         ret, frame = video.read()
         if not ret:
             break
+        timestamp = video.get(cv.CAP_PROP_POS_MSEC)
+        print(f"Searching For Score Box: {timestamp/1000}", end="\r")
         frame = cv.resize(frame, FRAME_SIZE)
         abs_cords = extract_scores_location_aux(frame)
     video.release()
     return abs_cords
+
+
+def get_score_value(frame: np.ndarray, coords: list[tuple[int, int, int, int]]):
+    """
+    -------------------------------------------------------
+    Extracts the numeric score value from a frame using OCR (Optical Character Recognition) based on the provided coordinates.
+    Use: score_value = get_score_value(frame, coords)
+    -------------------------------------------------------
+    Parameters:
+        frame - the input frame as a NumPy array (np.ndarray)
+        coords - a list of two tuples
+    Returns:
+        score_value - the extracted numeric score value as an integer (int)
+    -------------------------------------------------------
+    """
+    x1, y1, w1, h1 = coords[0]
+    x2, y2, w2, h2 = coords[1]
+    score_region = frame[y1 - 5 : y2 + h2 + 5, x1 - 5 : x2 + w2 + 5]
+
+    gray = cv.cvtColor(score_region, cv.COLOR_BGR2GRAY)
+    gray = cv.resize(gray, None, fx=2, fy=2, interpolation=cv.INTER_LINEAR)
+    gray = cv.GaussianBlur(gray, (5, 5), 0)
+    _, binary = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+    custom_config = r"--oem 3 --psm 6"
+    extracted_text = pytesseract.image_to_string(binary, config=custom_config).strip()
+    digits = "".join(re.findall(r"\d", extracted_text))
+
+    if len(digits) == 0:
+        return 0
+    return int(digits)
