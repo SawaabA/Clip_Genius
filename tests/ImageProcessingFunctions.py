@@ -81,7 +81,7 @@ def get_scoreboard_coordinates(image: np.ndarray) -> tuple[int, int, int, int]:
 
     except Exception as e:
         print(f"Error Processing Frames: {e}")
-        return 0, 0, image.shape[1], image.shape[0]
+        return None, None, None, None
 
 
 def extract_scoreboard(image: np.ndarray, x1: int, y1: int, x2: int, y2: int):
@@ -161,7 +161,9 @@ def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESH
 
 def extract_scores_location(frame):
     x1, y1, x2, y2 = get_scoreboard_coordinates(frame)
-    extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
-    score_cords = find_scores(extracted_image)
-    abs_cords = convert_to_abs_coordinates(x1, y1, score_cords)
-    return abs_cords
+    if x1:
+        extracted_image = extract_scoreboard(frame, x1, y1, x2, y2)
+        score_cords = find_scores(extracted_image)
+        abs_cords = convert_to_abs_coordinates(x1, y1, score_cords)
+        return abs_cords
+    return None
