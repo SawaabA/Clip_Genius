@@ -1,5 +1,5 @@
 frontend/node_modules
-
+output_videos/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

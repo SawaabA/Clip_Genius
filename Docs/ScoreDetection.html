@@ -21,7 +21,8 @@
         <p>This module, ImageProcessingFunctions, is designed for image and video processing, specifically for detecting
             and analyzing scoreboards in video frames. It uses a combination of computer vision techniques (OpenCV) and
             Optical Character Recognition (OCR) via Tesseract to extract and process score information.</p>
-        <h4>Work Flow</h4>
+
+        <h3>Work Flow</h3>
         <ol start="1">
             <li>
                 <p><strong>Scoreboard Detection</strong>:</p>
@@ -61,7 +62,14 @@
             </li>
         </ol>
 
-        <h4>Functions</h4>
+        <h3>In Process</h3>
+        <div class="grid grid-cols-3 items-center border rounded-xl">
+            <img src="Images/grayscale.png" alt="">
+            <img src="Images/edges.png" alt="" srcset="">
+            <img src="Images/marked.png" alt="" srcset="">
+        </div>
+
+        <h3>Functions</h3>
         <ol start="1">
             <li>
                 <p><strong><code>get_scoreboard_coordinates(image)</code></strong>:</p>
@@ -133,7 +141,7 @@
         </ol>
 
 
-        <h4>Test Results</h4>
+        <h3>Test Results</h3>
         <p>The testing phase successfully demonstrated the detection of various types of scoreboards across multiple
             games</p>
         <div class="grid grid-cols-1 lg:grid-cols-2">
@@ -142,8 +150,6 @@
             <img src="Images/TestImage3.png" alt="">
             <img src="Images/TestImage4.png" alt="">
         </div>
-
-        <h4>Final Output</h4>
         <p>The module successfully processed a 120-second clip, accurately detecting and tracking baskets throughout the
             duration.
             The system demonstrated full functionality, effectively identifying scoring events in real-time.</p>
