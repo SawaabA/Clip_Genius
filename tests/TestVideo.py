@@ -1,9 +1,9 @@
 """-------------------------------------------------------
-Get Score Card: Get Coordinates of Score Card
+CLIP GENIUS: Process Video
 -------------------------------------------------------
 Author:  JD
 ID:      91786
-Uses:    numpy,openCV
+Uses:    numpy,openCV,pytesseract
 Version:  1.0.8
 __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
