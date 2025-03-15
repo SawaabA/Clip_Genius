@@ -15,12 +15,23 @@ from PreProcessing import process_results
 from MultiProcessing import analayze_segments_with_threads
 from PreProcessing import split_video
 from time import sleep
-import os
+
 
 TEMPFOLDER = "output_videos"
 
 
 def PROCESS_VIDEO(file_path: str):
+    """
+    -------------------------------------------------------
+    Processes a video file to detect and display the scoreboard region, extract scores, and overlay them on the video.
+    Use: PROCESS_VIDEO(file_path)
+    -------------------------------------------------------
+    Parameters:
+        file_path - the path to the video file to process (str)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     video = cv.VideoCapture(file_path)
     if not video.isOpened():
         print("Error: Could not open video file.")
@@ -55,6 +66,17 @@ def PROCESS_VIDEO(file_path: str):
 
 
 def PROCESS_FILE(filepath):
+    """
+    -------------------------------------------------------
+    Processes a video file to detect score changes, analyze segments, and generate highlight clips.
+    Use: PROCESS_FILE(filepath)
+    -------------------------------------------------------
+    Parameters:
+        filepath - the path to the video file to process (str)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     cords = fetch_score_coords(filepath)
     results = analyze_segment(filepath, cords, 0)
     print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
@@ -62,12 +84,22 @@ def PROCESS_FILE(filepath):
 
 
 def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
+    """
+    -------------------------------------------------------
+    Processes a video file using multi-threading to detect score changes, analyze segments, and generate highlight clips.
+    Use: PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER)
+    -------------------------------------------------------
+    Parameters:
+        filepath - the path to the video file to process (str)
+        tempfolder - the directory to store temporary video segments (str, default=TEMPFOLDER)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     cords = fetch_score_coords(filepath)
-    print(cords)
     split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
-    sleep(1)
+    sleep(0.5)
     results = analayze_segments_with_threads(tempfolder, cords)
-    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
     os.rmdir(tempfolder)
     process_results(filepath, results)
 

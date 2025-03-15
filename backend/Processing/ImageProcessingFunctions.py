@@ -10,6 +10,7 @@ __updated__ = Fri Mar 14 2025
 """
 
 # IMPORTS
+
 from pytesseract import Output
 import pytesseract
 import numpy as np

@@ -15,8 +15,8 @@ import os
 
 # CONSTANTS
 TEMPFOLDER = "TEMPFOLDER"
-PRE_TIME = 10
-POST_TIME = 5
+PRE_TIME = 8
+POST_TIME = 4
 import json
 
 
