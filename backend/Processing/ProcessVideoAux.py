@@ -12,10 +12,6 @@ __updated__ = Fri Mar 14 2025
 from ImageProcessingFunctions import *
 
 
-# Constants
-FRAME_SIZE = (1000, 1000)
-
-
 def process_video(file_path: str):
     """Processes video and detects scoreboard in frames."""
     video = cv.VideoCapture(file_path)
@@ -52,6 +48,6 @@ if __name__ == "__main__":
     VIDEO_PATH = (
         "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
+    # cords = fetch_score_coords(VIDEO_PATH)
     cords = process_video(VIDEO_PATH)
     print(cords)
-    print("Stream Ended SUc")

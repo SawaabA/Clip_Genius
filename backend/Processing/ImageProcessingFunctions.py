@@ -16,6 +16,9 @@ import numpy as np
 import cv2 as cv
 
 # CONSTANTS
+COLOR = (0, 255, 0)
+FRAME_SIZE = (1000, 1000)
+
 THRESHOLD1 = 50  # for canny edge dector
 THRESHOLD2 = 200
 
@@ -28,9 +31,6 @@ SCOREBOARD_Y_RANGE = (0.75, 0.98)  # Expected Area
 
 CONFIG = r"--psm 11 --oem 3"  # for OCR
 CONFIDENCE_THRESHOLD = 10
-
-
-COLOR = (0, 255, 0)
 
 
 def get_scoreboard_coordinates(image: np.ndarray) -> tuple[int, int, int, int]:
@@ -125,17 +125,6 @@ def plotscores_on_images(image, scores):
     return image
 
 
-def convert_to_abs_coordinates(x1, y1, scores):
-    if not len(scores) == 2:
-        return False
-    absolute_coordinates = []
-    if not is_overlap(scores[0], scores[1]):
-        for s in scores:
-            absolute_coordinates.append((s[0] + x1, s[1] + y1, s[2], s[3]))
-        return absolute_coordinates
-    return None
-
-
 def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESHOLD):
     annotated_image = image.copy()
 
@@ -159,6 +148,17 @@ def find_scores(image: np.ndarray, confidence_threshold: int = CONFIDENCE_THRESH
     return cords
 
 
+def convert_to_abs_coordinates(x1, y1, scores):
+    if not len(scores) == 2:
+        return None
+    absolute_coordinates = []
+    if not is_overlap(scores[0], scores[1]):
+        for s in scores:
+            absolute_coordinates.append((s[0] + x1, s[1] + y1, s[2], s[3]))
+        return absolute_coordinates
+    return None
+
+
 def extract_scores_location_aux(frame):
     x1, y1, x2, y2 = get_scoreboard_coordinates(frame)
     if x1:
@@ -169,3 +169,20 @@ def extract_scores_location_aux(frame):
         abs_cords = convert_to_abs_coordinates(x1, y1, score_cords)
         return abs_cords
     return None
+
+
+def fetch_score_coords(file_path: str):
+    """Processes video and detects scoreboard in frames."""
+    video = cv.VideoCapture(file_path)
+    if not video.isOpened():
+        print("Error: Could not open video file.")
+        return None
+    abs_cords = None
+    while video.isOpened() and abs_cords is None:
+        ret, frame = video.read()
+        if not ret:
+            break
+        frame = cv.resize(frame, FRAME_SIZE)
+        abs_cords = extract_scores_location_aux(frame)
+    video.release()
+    return abs_cords
