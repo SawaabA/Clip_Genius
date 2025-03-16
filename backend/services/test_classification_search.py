@@ -112,10 +112,10 @@ def transcribe_and_embed_nemo(folder_path="clips/", chunk_duration=30):
         # Delete no longer needed file
         os.remove(file_path)
         print(f"Deleted {file}")
-        
+
     return results
 
-# Get vector embedding 
+# Get vector embedding from OpenAI
 def get_embedding(text, model="text-embedding-3-large"):
     text = text.replace("\n", " ")
     response = openai.embeddings.create(input=[text], model=model)
