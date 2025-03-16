@@ -1,5 +1,5 @@
 """-------------------------------------------------------
-CLIP GENIUS: Process Video
+CLIP GENIUS: Processor
 -------------------------------------------------------
 Author:  JD
 ID:      91786
@@ -9,18 +9,25 @@ __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
 """
 
-import os
+import shutil
 from ImageProcessingFunctions import *
-from PreProcessing import process_results
+from PreProcessing import process_results, split_video, TEMPFOLDER
 from MultiProcessing import analayze_segments_with_threads
-from PreProcessing import split_video
 from time import sleep
-import os
-
-TEMPFOLDER = "output_videos"
 
 
 def PROCESS_VIDEO(file_path: str):
+    """
+    -------------------------------------------------------
+    Processes a video file to detect and display the scoreboard region, extract scores, and overlay them on the video.
+    Use: PROCESS_VIDEO(file_path)
+    -------------------------------------------------------
+    Parameters:
+        file_path - the path to the video file to process (str)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     video = cv.VideoCapture(file_path)
     if not video.isOpened():
         print("Error: Could not open video file.")
@@ -55,25 +62,50 @@ def PROCESS_VIDEO(file_path: str):
 
 
 def PROCESS_FILE(filepath):
+    """
+    -------------------------------------------------------
+    Processes a video file to detect score changes, analyze segments, and generate highlight clips.
+    Use: PROCESS_FILE(filepath)
+    -------------------------------------------------------
+    Parameters:
+        filepath - the path to the video file to process (str)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     cords = fetch_score_coords(filepath)
     results = analyze_segment(filepath, cords, 0)
+    results = sorted(results)
     print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
     process_results(filepath, results)
 
 
 def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
+    """
+    -------------------------------------------------------
+    Processes a video file using multi-threading to detect score changes, analyze segments, and generate highlight clips.
+    Use: PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER)
+    -------------------------------------------------------
+    Parameters:
+        filepath - the path to the video file to process (str)
+        tempfolder - the directory to store temporary video segments (str, default=TEMPFOLDER)
+    Returns:
+        None
+    -------------------------------------------------------
+    """
     cords = fetch_score_coords(filepath)
-    print(cords)
     split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
-    sleep(1)
+    sleep(0.5)
     results = analayze_segments_with_threads(tempfolder, cords)
-    print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
-    os.rmdir(tempfolder)
+    results = sorted(results)
+    shutil.rmtree(tempfolder)
     process_results(filepath, results)
 
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test5.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test8.mp4"
     )
-    PROCESS_FILE(VIDEO_PATH)
+    PROCESS_VIDEO(VIDEO_PATH)
+    # PROCESS_FILE(VIDEO_PATH)
+    # PROCESS_FILE_MULTI_THREAD(VIDEO_PATH)

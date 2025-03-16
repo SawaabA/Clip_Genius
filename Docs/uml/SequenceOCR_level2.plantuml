@@ -1,0 +1,43 @@
+@startuml CLIP_GENIUS_2
+title Sequence Diagram For Video Processing & Highlight Generation Level II
+
+actor User
+participant "Command Line" as CLI
+participant "video_processor.py" as Script
+participant "PROCESS_VIDEO" as PV
+participant "PROCESS_FILE" as PF
+participant "PROCESS_FILE_MULTI_THREAD" as PFT
+
+User -> CLI: Runs script with video_path and --function
+CLI -> Script: Parses arguments (video_path, function_name)
+Script -> Script: Validates function_name
+alt function_name == "PROCESS_VIDEO"
+    Script -> PV: Calls PROCESS_VIDEO(video_path)
+    PV->PV:get_scoreboard_coordinates(frame)
+    PV->PV:extract_scoreboard(frame, x1, y1, x2, y2)
+    PV->PV:find_scores(extracted_image)
+    PV->PV:convert_to_abs_coordinates(x1, y1, score_cords)
+    PV->PV:plotscores_on_images(frame, abs_cords)
+    PV->PV:add_timestamp_to_frame(frame, timestamp)
+    PV -> User: Stream Videoframe for Debugging
+    
+else function_name == "PROCESS_FILE"
+    Script -> PF: Calls PROCESS_FILE(video_path)
+    PF->PF:fetch_score_coords(filepath)
+    PF->PF:analyze_segment(filepath, cords, 0)
+    PF->PF:process_results(filepath, results)
+    PF --> Script: Returns
+else function_name == "PROCESS_FILE_MULTI_THREAD"
+    Script -> PFT: Calls PROCESS_FILE_MULTI_THREAD(video_path)
+    PFT->PFT:cords = fetch_score_coords(filepath)
+    PFT->PFT: split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
+    PFT->PFT:analayze_segments_with_threads(tempfolder, cords)
+    PFT->PFT:process_results(filepath, results)
+    PFT --> Script: Returns
+else
+    Script -> Script: Prints error (Unknown function)
+end
+Script --> CLI: Returns output
+CLI --> User: Displays output
+
+@enduml

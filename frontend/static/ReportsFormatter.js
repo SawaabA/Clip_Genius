@@ -9,6 +9,33 @@ Version: 1.0.8
 __updated__ = Fri Mar 14 2025
 -------------------------------------------------------*/
 
+function appendCDNToMediaElements(cdnUrl) {
+    // Select all image and video elements
+    const mediaElements = document.querySelectorAll('img, video');
+
+    mediaElements.forEach(element => {
+        const src = element.getAttribute('src');
+        if (src && !src.startsWith(cdnUrl)) {
+            element.setAttribute('src', cdnUrl + src);
+        }
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const videos = document.querySelectorAll('video');
+    if (videos) {
+        videos.forEach(video => {
+            video.defaultPlaybackRate = 4.0;
+            video.muted = true;
+            video.play();
+            video.loop = true;
+        });
+
+    } else {
+        console.error('No video element found on the page.');
+    }
+});
 function generateIndex(containerId = "index") {
     const headings = document.querySelectorAll("h2,h3, h4, h5, h6");
     if (!headings.length) {
@@ -23,7 +50,7 @@ function generateIndex(containerId = "index") {
         container.id = containerId;
         document.body.insertBefore(container, document.body.firstChild);
     }
-    container.innerHTML = `<h3 style='margin-top:15px;'>Table of Contents</h3>`;
+    container.innerHTML = `<h3 style='margin-top:15px; font-weight:bolder;'>Table of Contents</h3>`;
     const indexList = document.createElement("ul");
     indexList.className = "menu"
     container.appendChild(indexList);
@@ -37,14 +64,14 @@ function generateIndex(containerId = "index") {
         }
         const link = document.createElement("a");
         link.href = `#${heading.id}`;
-        // link.className = "m-0 p-0 link"
+        link.className = "hover:underline hover:scale-[1.1]"
         link.textContent = heading.textContent;
         listItem.appendChild(link);
         listItem.style.marginLeft = `${(level - 2) * 20}px`;
 
         indexList.appendChild(listItem);
     });
-    container.classList.add("lg:w-64", "overflow-y-scroll", "border", "print:border-0", "p-3")
+    container.classList.add("lg:w-72", "overflow-y-scroll", "border", "print:border-0", "p-3", "bg-base-200")
 }
 
 function updateCSS(tags, addClasses = [], removeClasses = []) {
@@ -81,23 +108,23 @@ function loadStylesheet(href) {
 }
 
 function updateCSS_ALL() {
-    updateCSS(['h1'], ['text-3xl', 'font-bold']);
-    updateCSS(['h2'], ['text-2xl', 'font-semibold', 'mt-8', 'mb-1']);
+    updateCSS(['h1'], ['text-3xl', 'font-bold', "text-secondary"]);
+    updateCSS(['h2'], ['text-3xl', 'font-bold', 'mt-20', 'mb-1', 'text-primary']);
     updateCSS(['h3'], ['text-lg', 'font-semibold', 'mt-5', 'mb-1']);
     updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4', 'mb-1']);
     updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3', 'mb-1']);
     updateCSS(['h6'], ['text-xs', 'font-semibold', 'mt-2', 'mb-1']);
-    updateCSS(['p'], ['mt-1', 'text-md', 'text-muted-foreground', 'text-justify']);
-    updateCSS(['ul'], ['list-disc', 'pl-10']);
-    updateCSS(['ol'], ['list-decimal', 'pl-10']);
+    updateCSS(['p'], ['mt-2', 'text-[16px]', "mb-2", 'text-justify']);
+    updateCSS(['ul'], ['list-disc', 'pl-10', "mb-10"]);
+    updateCSS(['ol'], ['list-decimal', 'pl-10', "mb-10"]);
     updateCSS(['li'], ['m-0', 'p-0']);
     updateCSS(['table'], ['table', 'table-sm', 'mb-4', "mx-auto"]);
     updateCSS(['thead'], ['bg-gray-100']);
     updateCSS(['th'], ['px-4', 'py-2', 'text-left', 'font-bold']);
     updateCSS(['td'], ['px-4', 'py-2', 'border', 'border-gray-200']);
-    updateCSS(['img'], ['p-10']);
+    updateCSS(['img'], ['p-1', "rounded-lg"]);
     updateCSS(['blockquote'], ['border-l-4', 'border-gray-300', 'pl-4', 'italic', 'text-gray-600']);
-    updateCSS(['code'], ['bg-gray-100', 'p-1', 'rounded', 'text-sm', 'font-mono']);
+    updateCSS(['code'], ['bg-blue-50', 'p-1', 'rounded', 'font-bold', 'text-sm']);
     updateCSS(['pre'], ['bg-gray-100', 'p-4', 'rounded', 'overflow-x-auto']);
     updateCSS(['hr'], ['my-6', 'border-t', 'border-gray-200']);
     updateCSS(['button'], ['px-4', 'py-2', 'bg-blue-500', 'text-white', 'rounded', 'hover:bg-blue-600']);
@@ -106,18 +133,18 @@ function updateCSS_ALL() {
     updateCSS(['label'], ['block', 'text-sm', 'font-medium', 'text-gray-700']);
     updateCSS(['form'], ['space-y-4']);
     updateCSS(['section'], ['my-8']);
-    updateCSS(['div'], ['my-4']);
+    updateCSS(['div'], ['mb-10']);
 }
 
 
 
 loadScript("https://cdn.tailwindcss.com")
 loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css");
-document.documentElement.setAttribute("data-theme", "light");
+document.documentElement.setAttribute("data-theme", "corporate");
 setTimeout(() => {
     updateCSS_ALL()
     generateIndex()
 }, 200);
 
-document.querySelector("main").className = "container mx-auto px-4 py-8 overflow-y-scroll print:px-0"
+document.querySelector("main").className = "container mx-auto p-5 lg:px-[10.0%] py-8 overflow-y-scroll print:px-0"
 document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")
