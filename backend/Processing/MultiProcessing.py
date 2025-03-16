@@ -53,12 +53,13 @@ def analayze_segments_with_threads(segment_folder, score_coords):
     segments = os.listdir(os.path.join(segment_folder))
     for i, segment in enumerate(segments):
         segment = os.path.join(segment_folder, segment)
-        duration += get_video_duration(segment)
         print(f"{i} - {segment} @ {duration}")
         thread = threading.Thread(
             target=thread_wrapper,
             args=(segment, score_coords, duration, result_queue),
         )
+        duration += round(get_video_duration(segment), 2)
+
         thread.start()
         threads.append(thread)
 

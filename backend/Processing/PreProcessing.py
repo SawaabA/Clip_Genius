@@ -15,7 +15,7 @@ import os
 
 # CONSTANTS
 TEMPFOLDER = "TEMPFOLDER"
-PRE_TIME = 8
+PRE_TIME = 5
 POST_TIME = 4
 import json
 
@@ -163,7 +163,6 @@ def process_results(
     -------------------------------------------------------
     """
     for i, result in enumerate(results):
-        result = int(result)
         start_time = format_time(max(result - (pre_time * 1000), 0))
         end_time = format_time(result + (post_time * 1000))
         create_clip(
