@@ -329,7 +329,7 @@ def get_score_value(frame: np.ndarray, coords: list[tuple[int, int, int, int]]):
     gray = cv.resize(gray, None, fx=2, fy=2, interpolation=cv.INTER_LINEAR)
     gray = cv.GaussianBlur(gray, (5, 5), 0)
     _, binary = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-
+    cv.imwrite("tempimage.png", binary)
     custom_config = r"--oem 3 --psm 6"
     extracted_text = pytesseract.image_to_string(binary, config=custom_config).strip()
     digits = "".join(re.findall(r"\d", extracted_text))

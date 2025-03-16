@@ -104,8 +104,8 @@ def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test8.mp4"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mp4"
     )
-    PROCESS_VIDEO(VIDEO_PATH)
-    # PROCESS_FILE(VIDEO_PATH)
+    # PROCESS_VIDEO(VIDEO_PATH)
+    PROCESS_FILE(VIDEO_PATH)
     # PROCESS_FILE_MULTI_THREAD(VIDEO_PATH)
