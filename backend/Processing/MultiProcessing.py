@@ -9,8 +9,8 @@ __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
 """
 
-from ImageProcessingFunctions import analyze_segment
-from PreProcessing import get_video_duration
+from .ImageProcessingFunctions import analyze_segment
+from .PreProcessing import get_video_duration
 import threading
 import queue
 import os

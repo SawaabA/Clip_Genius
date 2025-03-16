@@ -368,7 +368,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     return prev_value
 
 
-def analyze_segment(file_path, score_coords, segment_number):
+def analyze_segment(file_path, score_coords, segment_number, debug=False):
     """
     -------------------------------------------------------
     Analyzes a video segment to detect changes in the score value and displays the video with real-time score detection.
@@ -408,7 +408,8 @@ def analyze_segment(file_path, score_coords, segment_number):
                 prev_value = process_frame(
                     frame, score_coords, prev_value, points, timestamp
                 )
-            # cv.imshow("Analyzing Match Footage", frame)
+            if debug:
+                cv.imshow("Analyzing Match Footage", frame)
             frame_count += 1
 
             if cv.waitKey(1) & 0xFF == ord("q"):
@@ -418,5 +419,5 @@ def analyze_segment(file_path, score_coords, segment_number):
 
     finally:
         video.release()
-        # cv.destroyAllWindows()
+        cv.destroyAllWindows()
     return points

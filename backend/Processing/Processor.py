@@ -10,9 +10,9 @@ __updated__ = Fri Mar 14 2025
 """
 
 import shutil
-from ImageProcessingFunctions import *
-from PreProcessing import process_results, split_video, TEMPFOLDER
-from MultiProcessing import analayze_segments_with_threads
+from .ImageProcessingFunctions import *
+from .PreProcessing import process_results, split_video, TEMPFOLDER
+from .MultiProcessing import analayze_segments_with_threads
 from time import sleep
 
 
@@ -61,7 +61,7 @@ def PROCESS_VIDEO(file_path: str):
     cv.destroyAllWindows()
 
 
-def PROCESS_FILE(filepath):
+def PROCESS_FILE(filepath, debug=False):
     """
     -------------------------------------------------------
     Processes a video file to detect score changes, analyze segments, and generate highlight clips.
@@ -74,7 +74,7 @@ def PROCESS_FILE(filepath):
     -------------------------------------------------------
     """
     cords = fetch_score_coords(filepath)
-    results = analyze_segment(filepath, cords, 0)
+    results = analyze_segment(filepath, cords, 0, debug)
     results = sorted(results)
     print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
     process_results(filepath, results)
