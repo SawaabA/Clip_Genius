@@ -20,7 +20,7 @@ function appendCDNToMediaElements(cdnUrl) {
         }
     });
 }
-appendCDNToMediaElements('https://cdn.example.com/');
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const videos = document.querySelectorAll('video');
