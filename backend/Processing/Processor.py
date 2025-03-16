@@ -96,13 +96,15 @@ def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
     split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
     sleep(0.5)
     results = analayze_segments_with_threads(tempfolder, cords)
+    results = sorted(results)
     shutil.rmtree(tempfolder)
     process_results(filepath, results)
 
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test10.mp4"
     )
+    PROCESS_VIDEO(VIDEO_PATH)
     # PROCESS_FILE(VIDEO_PATH)
-    PROCESS_FILE_MULTI_THREAD(VIDEO_PATH)
+    # PROCESS_FILE_MULTI_THREAD(VIDEO_PATH)

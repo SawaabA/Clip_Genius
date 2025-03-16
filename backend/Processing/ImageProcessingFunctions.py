@@ -358,7 +358,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     curr_value = get_score_value(frame, score_coords)
     if prev_value is None:
         prev_value = curr_value
-    elif curr_value != prev_value and curr_value != 0:
+    elif curr_value > prev_value:
         points.append(timestamp)
         print(f"Basket!! @ {timestamp/1000:.3f} \t Total Baskets: {len(points)}")
         prev_value = curr_value
