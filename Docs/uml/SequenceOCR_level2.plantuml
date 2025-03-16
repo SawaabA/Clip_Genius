@@ -25,16 +25,13 @@ else function_name == "PROCESS_FILE"
     Script -> PF: Calls PROCESS_FILE(video_path)
     PF->PF:fetch_score_coords(filepath)
     PF->PF:analyze_segment(filepath, cords, 0)
-    PF->PF:print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
     PF->PF:process_results(filepath, results)
     PF --> Script: Returns
 else function_name == "PROCESS_FILE_MULTI_THREAD"
     Script -> PFT: Calls PROCESS_FILE_MULTI_THREAD(video_path)
-
     PFT->PFT:cords = fetch_score_coords(filepath)
     PFT->PFT: split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
     PFT->PFT:analayze_segments_with_threads(tempfolder, cords)
-    PFT->PFT:sorted(results)
     PFT->PFT:process_results(filepath, results)
     PFT --> Script: Returns
 else

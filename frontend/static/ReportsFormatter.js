@@ -50,7 +50,7 @@ function generateIndex(containerId = "index") {
         container.id = containerId;
         document.body.insertBefore(container, document.body.firstChild);
     }
-    container.innerHTML = `<h3 style='margin-top:15px;'>Table of Contents</h3>`;
+    container.innerHTML = `<h3 style='margin-top:15px; font-weight:bolder;'>Table of Contents</h3>`;
     const indexList = document.createElement("ul");
     indexList.className = "menu"
     container.appendChild(indexList);
@@ -64,7 +64,7 @@ function generateIndex(containerId = "index") {
         }
         const link = document.createElement("a");
         link.href = `#${heading.id}`;
-        // link.className = "m-0 p-0 link"
+        link.className = "hover:underline hover:scale-[1.1]"
         link.textContent = heading.textContent;
         listItem.appendChild(link);
         listItem.style.marginLeft = `${(level - 2) * 20}px`;
@@ -114,7 +114,7 @@ function updateCSS_ALL() {
     updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4', 'mb-1']);
     updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3', 'mb-1']);
     updateCSS(['h6'], ['text-xs', 'font-semibold', 'mt-2', 'mb-1']);
-    updateCSS(['p'], ['mt-2', 'text-md', 'text-muted-foreground', 'text-justify']);
+    updateCSS(['p'], ['mt-2', 'text-[16px]', "mb-2", 'text-justify']);
     updateCSS(['ul'], ['list-disc', 'pl-10', "mb-10"]);
     updateCSS(['ol'], ['list-decimal', 'pl-10', "mb-10"]);
     updateCSS(['li'], ['m-0', 'p-0']);
@@ -124,7 +124,7 @@ function updateCSS_ALL() {
     updateCSS(['td'], ['px-4', 'py-2', 'border', 'border-gray-200']);
     updateCSS(['img'], ['p-1', "rounded-lg"]);
     updateCSS(['blockquote'], ['border-l-4', 'border-gray-300', 'pl-4', 'italic', 'text-gray-600']);
-    updateCSS(['code'], ['bg-blue-50', 'p-1', 'rounded', 'text-sm', 'font-bold']);
+    updateCSS(['code'], ['bg-blue-50', 'p-1', 'rounded', 'font-bold', 'text-sm']);
     updateCSS(['pre'], ['bg-gray-100', 'p-4', 'rounded', 'overflow-x-auto']);
     updateCSS(['hr'], ['my-6', 'border-t', 'border-gray-200']);
     updateCSS(['button'], ['px-4', 'py-2', 'bg-blue-500', 'text-white', 'rounded', 'hover:bg-blue-600']);

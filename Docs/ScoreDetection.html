@@ -25,10 +25,28 @@
             <video class="rounded-xl" src="Images/FinalOutput.mp4" type="video/mp4"></video>
         </div>
         <h2>Introduction</h2>
-        <p>This document outlines the design and functionality of the next version of the video processing application,
-            Clip Genius. The application now includes advanced features such as scoreboard detection, score extraction
-            using Optical Character Recognition (OCR), and real-time video frame analysis. It is designed to process
-            full lenght games to generate highlight clips.</p>
+        <p>This report describes the design and features of a video processing application that can automatically
+            analyze sports
+            videos. The application is designed to recognize scoreboards within a video, extract the displayed scores
+            using a
+            technology called Optical Character Recognition (OCR), and examine video frames in real time. By doing this,
+            it can
+            track changes in the score and identify key moments in a game.
+
+            With these capabilities, the application processes video files efficiently. Instead of
+            manually
+            searching for important moments, users can rely on the software to detect score updates and automatically
+            generate
+            highlight clips. This saves time and ensures that key plays and significant game events are captured without
+            any manual
+            effort.
+        </p>
+        <p>
+            This report provides a clear explanation of how the application works, including its core features, design,
+            and intended
+            use. It is intended for developers, project managers, and other stakeholders who need a detailed
+            understanding of the
+            system.</p>
         <p>The primary users of this software would be oranizations that hold the rights to publish content for their
             teams on
             platforms such as their websites and social media.</p>
@@ -261,6 +279,18 @@
             approach reduces the need for heavy computations by processing only the necessary pixels, ensuring the
             system stays fast
             and efficient.</p>
+
+        <p> The numeric score from a video frame using Optical Character Recognition
+            (OCR). It
+            takes a frame and coordinates of the score regions as input. First, it crops the score area from the frame
+            and
+            preprocesses it by converting it to grayscale, resizing, and cleaning up noise. Then, OCR is used to read
+            the text,
+            focusing only on numbers. The extracted text is filtered to keep only digits. If no digits are found, it
+            returns 0.
+            Otherwise, it combines the digits into a single number and returns it as the score. This function helps
+            detect and read
+            scores from video frames.</p>
         <div class="grid grid-cols-3 items-center">
             <img src="Images/grayscale.png" alt="">
             <img src="Images/edges.png" alt="" srcset="">
@@ -345,7 +375,8 @@
         </ul>
     </main>
 
-    <script src="https://jayd719.github.io/assets/reports/reportV3.js"></script>
+    <script src="../frontend/static/ReportsFormatter.js"></script>
+    <!-- <script src="https://jayd719.github.io/assets/reports/reportV3.js"></script> -->
     <script>
         appendCDNToMediaElements('https://raw.githubusercontent.com/jayd719/jayd719.github.io/b5cb4160a7f6dca5d8d6bfc2c65d57fc69ef2167/assets/LaurierAnalytics/');
     </script>
