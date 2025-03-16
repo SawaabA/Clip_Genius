@@ -1,5 +1,5 @@
 """-------------------------------------------------------
-CLIP GENIUS: Process Video
+CLIP GENIUS: Processor
 -------------------------------------------------------
 Author:  JD
 ID:      91786
@@ -9,15 +9,11 @@ __updated__ = Fri Mar 14 2025
 -------------------------------------------------------
 """
 
-import os
+import shutil
 from ImageProcessingFunctions import *
-from PreProcessing import process_results
+from PreProcessing import process_results, split_video, TEMPFOLDER
 from MultiProcessing import analayze_segments_with_threads
-from PreProcessing import split_video
 from time import sleep
-
-
-TEMPFOLDER = "output_videos"
 
 
 def PROCESS_VIDEO(file_path: str):
@@ -100,12 +96,13 @@ def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):
     split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")
     sleep(0.5)
     results = analayze_segments_with_threads(tempfolder, cords)
-    os.rmdir(tempfolder)
+    shutil.rmtree(tempfolder)
     process_results(filepath, results)
 
 
 if __name__ == "__main__":
     VIDEO_PATH = (
-        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test5.mov"
+        "/Users/jashan/projects/LaurierAnalitics2025/tests/testImages/Test1.mov"
     )
-    PROCESS_FILE(VIDEO_PATH)
+    # PROCESS_FILE(VIDEO_PATH)
+    PROCESS_FILE_MULTI_THREAD(VIDEO_PATH)
