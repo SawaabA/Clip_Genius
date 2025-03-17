@@ -71,7 +71,7 @@ function generateIndex(containerId = "index") {
 
         indexList.appendChild(listItem);
     });
-    container.classList.add("lg:w-72", "overflow-y-scroll", "border", "print:border-0", "p-3", "bg-base-200")
+    container.classList.add("overflow-y-scroll", "border", "print:border-0", "p-3", "bg-base-200")
 }
 
 function updateCSS(tags, addClasses = [], removeClasses = []) {
@@ -108,8 +108,8 @@ function loadStylesheet(href) {
 }
 
 function updateCSS_ALL() {
-    updateCSS(['h1'], ['text-3xl', 'font-bold', "text-secondary"]);
-    updateCSS(['h2'], ['text-3xl', 'font-bold', 'mt-20', 'mb-1', 'text-primary']);
+    updateCSS(['h1'], ['text-4xl', 'font-bold', "text-secondary"]);
+    updateCSS(['h2'], ['text-4xl', 'font-bold', 'mt-20', 'mb-1', 'text-primary', "leading-tight"]);
     updateCSS(['h3'], ['text-lg', 'font-semibold', 'mt-5', 'mb-1']);
     updateCSS(['h4'], ['text-md', 'font-semibold', 'mt-4', 'mb-1']);
     updateCSS(['h5'], ['text-sm', 'font-semibold', 'mt-3', 'mb-1']);
@@ -125,7 +125,7 @@ function updateCSS_ALL() {
     updateCSS(['img'], ['p-1', "rounded-lg"]);
     updateCSS(['blockquote'], ['border-l-4', 'border-gray-300', 'pl-4', 'italic', 'text-gray-600']);
     updateCSS(['code'], ['bg-blue-50', 'p-1', 'rounded', 'font-bold', 'text-sm']);
-    updateCSS(['pre'], ['bg-gray-100', 'p-4', 'rounded', 'overflow-x-auto']);
+    updateCSS(['pre'], ['bg-gray-100', 'p-4', 'rounded', 'overflow-x-auto', "mb-4"]);
     updateCSS(['hr'], ['my-6', 'border-t', 'border-gray-200']);
     updateCSS(['button'], ['px-4', 'py-2', 'bg-blue-500', 'text-white', 'rounded', 'hover:bg-blue-600']);
     updateCSS(['input'], ['px-3', 'py-2', 'border', 'border-gray-300', 'rounded', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500']);
@@ -134,17 +134,19 @@ function updateCSS_ALL() {
     updateCSS(['form'], ['space-y-4']);
     updateCSS(['section'], ['my-8']);
     updateCSS(['div'], ['mb-10']);
+    updateCSS(['figcaption'], ['font-bold', "text-center", "mb-2"]);
+    updateCSS(['a'], ['text-blue-500', "hover:underline"]);
 }
 
 
 
-loadScript("https://cdn.tailwindcss.com")
-loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css");
-document.documentElement.setAttribute("data-theme", "corporate");
-setTimeout(() => {
-    updateCSS_ALL()
-    generateIndex()
-}, 200);
+// loadScript("https://cdn.tailwindcss.com")
+// loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css");
+// document.documentElement.setAttribute("data-theme", "lofi");
+// setTimeout(() => {
+//     updateCSS_ALL()
+//     generateIndex()
+// }, 200);
 
-document.querySelector("main").className = "container mx-auto p-5 lg:px-[10.0%] py-8 overflow-y-scroll print:px-0"
-document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")
+// document.querySelector("main").className = "container mx-auto p-5 lg:px-[10.0%] py-8 overflow-y-scroll print:px-0"
+// document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")

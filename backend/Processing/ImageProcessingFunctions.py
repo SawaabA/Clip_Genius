@@ -16,11 +16,12 @@ import pytesseract
 import numpy as np
 import cv2 as cv
 import re
+import sys
 
 # CONSTANTS
 DEBUG = False
 
-SEGMENT_SIZE = 30
+SEGMENT_SIZE = 15
 
 COLOR = (0, 255, 0)
 FRAME_SIZE = (1000, 1000)
@@ -140,7 +141,7 @@ def add_timestamp_to_frame(frame, timestamp):
         None
     -------------------------------------------------------
     """
-    timestamp_text = f"Time: {timestamp/ 1000:.2f}s"
+    timestamp_text = f"Time: {timestamp:.2f}s"
     cv.putText(
         frame,
         timestamp_text,
@@ -329,7 +330,7 @@ def get_score_value(frame: np.ndarray, coords: list[tuple[int, int, int, int]]):
     gray = cv.resize(gray, None, fx=2, fy=2, interpolation=cv.INTER_LINEAR)
     gray = cv.GaussianBlur(gray, (5, 5), 0)
     _, binary = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-
+    cv.imwrite("tempimage.png", binary)
     custom_config = r"--oem 3 --psm 6"
     extracted_text = pytesseract.image_to_string(binary, config=custom_config).strip()
     digits = "".join(re.findall(r"\d", extracted_text))
@@ -360,7 +361,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
         prev_value = curr_value
     elif curr_value > prev_value:
         points.append(timestamp)
-        print(f"Basket!! @ {timestamp/1000:.3f} \t Total Baskets: {len(points)}")
+        print(f"Basket!! @ {timestamp:.3f} \t Total Baskets: {len(points)}")
         prev_value = curr_value
 
     if DEBUG:
@@ -368,7 +369,7 @@ def process_frame(frame, score_coords, prev_value, points, timestamp):
     return prev_value
 
 
-def analyze_segment(file_path, score_coords, segment_number):
+def analyze_segment(file_path, score_coords, segment_number, debug=False):
     """
     -------------------------------------------------------
     Analyzes a video segment to detect changes in the score value and displays the video with real-time score detection.
@@ -378,7 +379,6 @@ def analyze_segment(file_path, score_coords, segment_number):
         file_path - the path to the video file (str)
         score_coords - a list of two tuples,
         segment_number - the segment number being analyzed (int)
-        masterfile - the name or identifier of the master file being processed (str)
     Returns:
         None
     -------------------------------------------------------
@@ -402,21 +402,24 @@ def analyze_segment(file_path, score_coords, segment_number):
                 break
 
             frame = cv.resize(frame, FRAME_SIZE)
-            timestamp = (segment_number * 1000) + video.get(cv.CAP_PROP_POS_MSEC)
+            timestamp = segment_number + (video.get(cv.CAP_PROP_POS_MSEC) / 1000)
 
             if frame_count % frame_interval == 0:
                 prev_value = process_frame(
                     frame, score_coords, prev_value, points, timestamp
                 )
-            # cv.imshow("Analyzing Match Footage", frame)
+            if debug:
+                add_timestamp_to_frame(frame, timestamp)
+                cv.imshow("Analyzing Match Footage", frame)
             frame_count += 1
 
             if cv.waitKey(1) & 0xFF == ord("q"):
                 break
 
-            print(f"Analyzing Video {segment_number} - {timestamp/1000:.2f}", end="\r")
+            print(f"Analyzing Video {segment_number} - {timestamp:.2f}", end="\r")
+            sys.stdout.flush()
 
     finally:
         video.release()
-        # cv.destroyAllWindows()
+        cv.destroyAllWindows()
     return points

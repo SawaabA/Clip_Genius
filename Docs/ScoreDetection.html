@@ -4,75 +4,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Video Processing & Highlight
         Generation</title>
+    <!-- <link rel="stylesheet" href="Images/t.css"> -->
 </head>
 <style>
     body {
         font-family: 'Helvetica Neue', Arial, sans-serif;
+        scroll-snap-type: y mandatory;
     }
 </style>
 
 <body>
     <main>
-        <h1>Design Specification Document for</h1>
-        <span class="text-6xl mb-[50px] font-bold">Video Processing & Highlight
-            Generation</span>
+        <h2>Design Specifications for</h2>
+        <h1>Video Processing <span class="text-6xl font-buld">for</span> Event Detection</h1>
         <hr>
 
         <div>
-            <video autoplay loop muted playsinline class="rounded-xl" src="Images/FinalOutput.mp4"
-                type="video/mp4"></video>
+            <figure>
+                <div class="mockup-browser border border-base-300 w-full">
+                    <div class="grid place-content-center h-80">
+                        <video autoplay loop muted playsinline class="rounded-xl" src="Images/FinalOutput.mp4"
+                            type="video/mp4"></video>
+                    </div>
+                </div>
+
+                <figcaption>See the Analysis in Action (Video-Click To Play)</figcaption>
+            </figure>
         </div>
+
         <h2>Introduction</h2>
-        <p>This report describes the design and features of a video processing application that can automatically
+        <p>This report describes the design and features of a video processing application, developed during the
+            <strong>Laurier Analytics Datathon</strong> hosted at <strong>Google Waterloo</strong> , that can
+            automatically
             analyze sports
-            videos. The application is designed to recognize scoreboards within a video, extract the displayed scores
+            videos. The application is designed to recognize scoreboards within a video, extract the displayed
+            scores
             using a
-            technology called Optical Character Recognition (OCR), and examine video frames in real time. By doing this,
+            technulogy called Optical Character Recognition (OCR), and examine video frames in real time. By
+            doing
+            this,
             it can
             track changes in the score and identify key moments in a game.
 
             With these capabilities, the application processes video files efficiently. Instead of
             manually
-            searching for important moments, users can rely on the software to detect score updates and automatically
+            searching for important moments, users can rely on the software to detect score updates and
+            automatically
             generate
-            highlight clips. This saves time and ensures that key plays and significant game events are captured without
+            highlight clips. This saves time and ensures that key plays and significant game events are captured
+            without
             any manual
             effort.
         </p>
         <p>
-            This report provides a clear explanation of how the application works, including its core features, design,
+            This report provides a clear explanation of how the application works, including its core features,
+            design,
             and intended
-            use. It is intended for developers, project managers, and other stakeholders who need a detailed
-            understanding of the
-            system.</p>
-        <p>The primary users of this software would be oranizations that hold the rights to publish content for their
+            use. It is intended for developers, project managers, and other stakehulders who need a detailed
+            understanding of the system.</p>
+        <p>The primary users of this software would be oranizations that huld the rights to publish content for
+            their
             teams on
             platforms such as their websites and social media.</p>
 
+        <h3>Key Features</h3>
+        <ol>
+            <li>
+                <strong>Scoreboard Detection</strong>: Automatically identifies the scoreboard region in
+                video
+                frames
+                using
+                edge detection and Hough line transform.
+            </li>
+            <li>
+                <strong>Score Extraction</strong>: Uses OCR (Tesseract) to extract numeric scores from the scoreboard
+                region.
+
+            </li>
+            <li>
+                <strong>Highlight Generation</strong>: Creates highlight clips around detected score changes,
+                with
+                customizable pre- and post-event durations.
+            </li>
+            <li>
+                <strong>Multi-Threaded Processing</strong>: Speeds up video analysis by processing segments
+                concurrently
+                using threading.
+            </li>
+        </ol>
         <h2>Usage</h2>
-        <img src="Images/CLIP_GENIUS.svg" alt="">
-        <pre>python main.py &lt;video_path&gt; --function &lt;function_name&gt;</pre>
+        <pre><span class="text-red-900 font-buld">python</span> <strong>main.py</strong> &lt;video_path&gt; <span class="text-yellow-800 font-buld">--function</span> &lt;function_name&gt; <span class="text-yellow-800 font-buld">--debug</span>(optional) <span class="text-yellow-800 font-buld">--output</span> &lt;output dir path&gt;(optional)</pre>
+
         <h3>Arguments</h3>
         <ul>
             <li>
-                <p><code>video_path</code>: Path to the video file to be processed.</p>
+                <code>video_path</code>: Path to the video file to be processed.
             </li>
             <li>
-                <p><code>--function</code>: Specifies the processing function to use. Valid options are:</p>
-                <ul>
+                <code>--function</code>: Specifies the processing function to use. Valid options are:
+                <ul style="margin-bottom: 2px;">
                     <li>
-                        <p><code>PROCESS_VIDEO</code></p>
+                        <code>PROCESS_VIDEO</code>
                     </li>
                     <li>
-                        <p><code>PROCESS_FILE</code></p>
+                        <code>PROCESS_FILE</code>
                     </li>
                     <li>
-                        <p><code>PROCESS_FILE_MULTI_THREAD</code></p>
+                        <code>PROCESS_FILE_MULTI_THREAD</code>
                     </li>
                 </ul>
+            </li>
+
+            <li>
+                <code>--debug</code>: To Run in Debug Mode (Optional)
+            </li>
+
+            <li>
+                <code>--output</code>: Output Directory Path (Optional)
             </li>
         </ul>
         <h3>Dependencies</h3>
@@ -87,162 +138,182 @@
             <li><code>json</code>: Parsing FFprobe output.</li>
             <li><code>time</code>: Timestamp formatting.</li>
             <li><code>threading</code>: Multi-threaded analysis.</li>
-            <li><code>queue</code>: Collecting thread results.</li>
+            <li><code>queue</code>: Cullecting thread results.</li>
         </ul>
 
         <h2>Application Overview</h2>
-        <p>The application is a command-line tool that processes video files based on user-specified functions. It
+        <p>The application is a command-line toul that processes video files based on user-specified functions.
+            It
             supports three main processing modes:</p>
         <ol start="1">
             <li>
-                <p><strong>PROCESS_VIDEO</strong>: Processes a video file using a specialized video processing
-                    function.
-                </p>
+                <h4>PROCESS_VIDEO</h4>: Processes a video file using a specialized video processing
+                function.
+
                 <ul>
                     <li>
-                        <p>Used for debugging and visualizing video processing.</p>
+                        Used for debugging and visualizing video processing.
                     </li>
                     <li>
-                        <p>Steps:</p>
-                        <ol start="1">
+                        Steps:
+                        <ul start="1">
                             <li>
-                                <p><code>get_scoreboard_coordinates(frame)</code>: Identifies the coordinates of the
-                                    scoreboard in the
-                                    video frame.</p>
+                                <code>get_scoreboard_coordinates(frame)</code>: Identifies the coordinates of
+                                the
+                                scoreboard in the
+                                video frame.
                             </li>
                             <li>
-                                <p><code>extract_scoreboard(frame, x1, y1, x2, y2)</code>: Extracts the scoreboard
-                                    region from the
-                                    frame.</p>
+                                <code>extract_scoreboard(frame, x1, y1, x2, y2)</code>: Extracts the
+                                scoreboard
+                                region from the
+                                frame.
                             </li>
                             <li>
-                                <p><code>find_scores(extracted_image)</code>: Detects scores from the extracted
-                                    scoreboard image.</p>
+                                <code>find_scores(extracted_image)</code>: Detects scores from the extracted
+                                scoreboard image.
                             </li>
                             <li>
-                                <p><code>convert_to_abs_coordinates(x1, y1, score_cords)</code>: Converts relative
-                                    score
-                                    coordinates to
-                                    absolute coordinates.</p>
+                                <code>convert_to_abs_coordinates(x1, y1, score_cords)</code>: Converts
+                                relative
+                                score
+                                coordinates to
+                                absulute coordinates.
                             </li>
                             <li>
-                                <p><code>plotscores_on_images(frame, abs_cords)</code>: Overlays the detected scores
-                                    on
-                                    the video frame.
-                                </p>
+                                <code>plotscores_on_images(frame, abs_cords)</code>: Overlays the detected
+                                scores
+                                on
+                                the video frame.
+
                             </li>
                             <li>
-                                <p><code>add_timestamp_to_frame(frame, timestamp)</code>: Adds a timestamp to the
-                                    frame.
-                                </p>
+                                <code>add_timestamp_to_frame(frame, timestamp)</code>: Adds a timestamp to
+                                the
+                                frame.
+
                             </li>
                             <li>
-                                <p>The processed frame is streamed to the user for debugging.</p>
+                                The processed frame is streamed to the user for debugging.
                             </li>
-                        </ol>
+                        </ul>
 
 
                     </li>
                 </ul>
             </li>
             <li>
-                <p><strong>PROCESS_FILE</strong>: Processes a video file using a single-threaded approach.</p>
+                <h4>PROCESS_FILE</h4>: Processes a video file using a single-threaded approach.
                 <ul>
                     <li>
-                        <p>Processes a video file to detect highlights.</p>
+                        Processes a video file to detect highlights.
                     </li>
                     <li>
-                        <p>Steps:</p>
-                        <ol start="1">
+                        Steps:
+                        <ul start="1">
                             <li>
-                                <p><code>fetch_score_coords(filepath)</code>: Fetches the coordinates of the
-                                    scoreboard
-                                    in the video.
-                                </p>
+                                <code>fetch_score_coords(filepath)</code>: Fetches the coordinates of the
+                                scoreboard
+                                in the video.
+
                             </li>
                             <li>
-                                <p><code>analyze_segment(filepath, cords, 0)</code>: Analyzes the video segment to
-                                    detect successful shots.</p>
+                                <code>analyze_segment(filepath, cords, 0)</code>: Analyzes the video segment
+                                to
+                                detect successful shots.
                             </li>
                             <li>
-                                <p><code>process_results(filepath, results)</code>: Create individual clips.</p>
+                                <code>process_results(filepath, results)</code>: Create individual clips.
                             </li>
                             <li>
-                                <p>Returns control to the script.</p>
+                                Returns contrul to the script.
                             </li>
-                        </ol>
+                        </ul>
                     </li>
                 </ul>
             </li>
             <li>
-                <p><strong>PROCESS_FILE_MULTI_THREAD</strong>: Processes a video file using a multi-threaded
-                    approach
-                    for
-                    improved performance.</p>
-                <ol start="1">
+                <h4>PROCESS_FILE_MULTI_THREAD</h4>: Processes a video file using a multi-threaded
+                approach
+                for
+                improved performance.
+                <ul start="1">
                     <li>
-                        <p><code>fetch_score_coords(filepath)</code>: Fetches the coordinates of the scoreboard.</p>
+                        <code>fetch_score_coords(filepath)</code>: Fetches the coordinates of the scoreboard.
+
                     </li>
                     <li>
-                        <p><code>split_video(filepath, SEGMENT_SIZE, tempfolder, "segments_%03d.mp4")</code>: Splits
-                            the
-                            video into
-                            smaller segments for parallel processing.</p>
+                        <code>split_video(filepath, SEGMENT_SIZE, tempfulder, "segments_%03d.mp4")</code>:
+                        Splits
+                        the
+                        video into
+                        smaller segments for parallel processing.
                     </li>
                     <li>
-                        <p><code>analyze_segments_with_threads(tempfolder, cords)</code>: Analyzes the video
-                            segments
-                            concurrently using
-                            multiple threads.</p>
+                        <code>analyze_segments_with_threads(tempfulder, cords)</code>: Analyzes the video
+                        segments
+                        concurrently using
+                        multiple threads.
                     </li>
                     <li>
-                        <p><code>sorted(results)</code>: Sorts the results from all threads.</p>
+                        <code>sorted(results)</code>: Sorts the results from all threads.
                     </li>
                     <li>
-                        <p><code>process_results(filepath, results)</code>: Processes the results.</p>
+                        <code>process_results(filepath, results)</code>: Processes the results.
                     </li>
                     <li>
-                        <p>Returns control to the script.</p>
+                        Returns contrul to the script.
                     </li>
-                </ol>
+                </ul>
             </li>
         </ol>
-        <img src="Images/CLIP_GENIUS_2.svg" alt="">
+        <h3>Abstracted Sequence Diagram</h3>
+        <figure>
+            <img src="Images/CLIP_GENIUS.svg" alt="">
+            <figcaption>Sequence Diagram for CLI</figcaption>
+        </figure>
+        <h3>Inter-Service Dependency Sequence Diagram</h3>
+        <figure>
+            <img src="Images/CLIP_GENIUS_2.svg" alt="">
+            <figcaption>Detailed Sequence Diagram of Inter-Service Dependency Calls</figcaption>
+        </figure>
+
         <h2>Modules</h2>
         <ul style="margin-bottom: 2px;">
             <li>
-                <p><strong><code>Processor</code></strong>:</p>
+                <strong><code>Processor</code></strong>:
                 <ul style="margin-bottom: 2px;">
                     <li>
-                        <p>Contains the core processing functions: <code>PROCESS_VIDEO</code>,
-                            <code>PROCESS_FILE</code>, and
-                            <code>PROCESS_FILE_MULTI_THREAD</code>.
-                        </p>
+                        Contains the core processing functions: <code>PROCESS_VIDEO</code>,
+                        <code>PROCESS_FILE</code>, and
+                        <code>PROCESS_FILE_MULTI_THREAD</code>.
+
                     </li>
                 </ul>
             </li>
             <li>
-                <p><strong><code>ImageProcessingFunctions</code></strong>:</p>
+                <strong><code>ImageProcessing</code></strong>:
                 <ul style="margin-bottom: 2px;">
                     <li>
-                        <p>Contains functions for scoreboard detection, score extraction, and image manipulation.
-                        </p>
+                        Contains functions for scoreboard detection, score extraction, and image
+                        manipulation.
+
                     </li>
                 </ul>
             </li>
             <li>
-                <p><strong><code>PreProcessing</code></strong>:</p>
+                <strong><code>PreProcessing</code></strong>:
                 <ul style="margin-bottom: 2px;">
                     <li>
-                        <p>Contains functions for splitting videos and processing results.</p>
+                        Contains functions for splitting videos and processing results.
                     </li>
                 </ul>
             </li>
             <li>
-                <p><strong><code>MultiProcessing</code></strong>:</p>
+                <strong><code>MultiProcessing</code></strong>:
                 <ul style="margin-bottom: 2px;">
                     <li>
-                        <p>Contains functions for multi-threaded video segment analysis.</p>
+                        Contains functions for multi-threaded video segment analysis.
                     </li>
                 </ul>
             </li>
@@ -251,51 +322,75 @@
 
 
         <h2>Process</h2>
-        <p>The video processing method involves several key steps, using necessary libraries like OpenCV,
+        <p>The video processing method invulves several key steps, using necessary libraries like OpenCV,
             PyTesseract,
             ffmeg and others
         </p>
-        <p>The process starts by opening the video file with cv.VideoCapture. If the video can't be opened, an error
+        <p>The process starts by opening the video file with cv.VideoCapture. If the video can't be opened, an
+            error
             is
             shown. The video is then processed one frame at a time, and each frame is resized to a 512x512 for
             effective
             computation. The area
             of the
-            scoreboard is found using get_scoreboard_coordinates, which uses edge detection and Hough Line Transform
+            scoreboard is found using get_scoreboard_coordinates, which uses edge detection and Hough Line
+            Transform
             to
             find horizontal lines. If the horizonta lines are found, the scoreboard area is extracted using
             extract_scoreboard.
         </p>
         <p>
-            OCR is then used on the extracted scoreboard area with pytesseract to read scores (i.e. Digists) with a
+            OCR is then used on the extracted scoreboard area with pytesseract to read scores (i.e. Digists)
+            with a
             set
-            confidence level (CONFIDENCE_THRESHOLD set as 75). The position of these scores is changed to absolute
+            confidence level (CONFIDENCE_THRESHulD set as 75). The position of these scores is changed to
+            absulute
             coordinates. For the next frames, the detected scores are added to the
             video using plotscores_on_images, and a rectangle is drawn around the scoreboard for clarity. A
             timestamp is
             also added to each frame using add_timestamp_to_frame.</p>
-        <p>The coordinates obtained from the previous module are used to crop the image and track scores and monitor
+        <p>The coordinates obtained from the previous module are used to crop the image and track scores and
+            monitor
             the
             game. This
-            approach reduces the need for heavy computations by processing only the necessary pixels, ensuring the
+            approach reduces the need for heavy computations by processing only the necessary pixels, ensuring
+            the
             system stays fast
             and efficient.</p>
 
         <p> The numeric score from a video frame using Optical Character Recognition
             (OCR). It
-            takes a frame and coordinates of the score regions as input. First, it crops the score area from the frame
+            takes a frame and coordinates of the score regions as input. First, it crops the score area from the
+            frame
             and
-            preprocesses it by converting it to grayscale, resizing, and cleaning up noise. Then, OCR is used to read
+            preprocesses it by converting it to grayscale, resizing, and cleaning up noise. Then, OCR is used to
+            read
             the text,
-            focusing only on numbers. The extracted text is filtered to keep only digits. If no digits are found, it
+            focusing only on numbers. The extracted text is filtered to keep only digits. If no digits are
+            found, it
             returns 0.
-            Otherwise, it combines the digits into a single number and returns it as the score. This function helps
+            Otherwise, it combines the digits into a single number and returns it as the score. This function
+            helps
             detect and read
             scores from video frames.</p>
-        <div class="grid grid-cols-3 items-center">
-            <img src="Images/grayscale.png" alt="">
-            <img src="Images/edges.png" alt="" srcset="">
-            <img src="Images/marked.png" alt="" srcset="">
+        <h3>Inprocess Frames</h3>
+        <div class="grid  grid-cols-1 lg:grid-cols-3 items-center">
+            <figure>
+                <img src="Images/grayscale.png" alt="">
+                <figcaption>Converted To grayscale and Smoothened</figcaption>
+            </figure>
+            <figure>
+                <img src="Images/edges.png" alt="" srcset="">
+                <figcaption>Edge Detection Using Canny Edge Detection</figcaption>
+            </figure>
+
+            <figure>
+                <img src="Images/marked.png" alt="" srcset="">
+                <figcaption>Exraction Of Scoreboard Area</figcaption>
+                <img src="Images/BinaryImage.png" alt="" srcset="">
+                <img src="Images/BinarImage2.png" alt="" srcset="">
+                <figcaption>Removal of Noise In Scores Region</figcaption>
+            </figure>
         </div>
 
 
@@ -304,16 +399,17 @@
         <h3>Scoreboard Detection</h3>
         <ul>
             <li>
-                <p><strong>Input</strong>: A video file with a visible scoreboard.</p>
+                <strong>Input</strong>: A video file with a visible scoreboard.
             </li>
             <li>
-                <p><strong>Expected Output</strong>: The application detects the scoreboard region and returns its
-                    bounding box
-                    coordinates.</p>
+                <strong>Expected Output</strong>: The application detects the scoreboard region and returns
+                its
+                bounding box
+                coordinates.
             </li>
             <li>
-                <p><strong>Result</strong>: The scoreboard was detected with an accuracy of different videos.
-                </p>
+                <strong>Result</strong>: The scoreboard was detected with an accuracy of different videos.
+
             </li>
         </ul>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-0">
@@ -323,68 +419,141 @@
             <img src="Images/TestImage3.png" alt="">
             <img src="Images/TestImage4.png" alt="">
             <img src="Images/TestImage5.png" alt="">
-
         </div>
+
         <h3>Real-Time Frame Analysis</h3>
         <ul>
             <li>
-                <p><strong>Input</strong>: A video file with multiple score changes.</p>
+                <strong>Input</strong>: A video file with multiple score changes.
             </li>
             <li>
-                <p><strong>Expected Output</strong>: The application detects score changes and records the timestamps.
-                </p>
+                <strong>Expected Output</strong>: The application detects score changes and records the
+                timestamps.
+
             </li>
             <li>
-                <p><strong>Result</strong>: All score changes were detected, and timestamps were recorded correctly.</p>
+                <strong>Result</strong>: All score changes were detected, and timestamps were recorded
+                correctly.
+
             </li>
         </ul>
-        <video autoplay loop muted playsinline class="rounded-xl mb-10" src="Images/FinalOutput.mp4"
-            type="video/mp4"></video>
+        <figure>
+            <video autoplay loop muted playsinline class="rounded-xl" src="Images/FinalOutput.mp4"
+                type="video/mp4"></video>
+            <figcaption>See the Analysis in Action (Video-Click To Play)</figcaption>
+        </figure>
+        <figure>
+            <video autoplay loop muted playsinline class="rounded-xl" src="Images/Finaloutput2.mp4"
+                type="video/mp4"></video>
+            <figcaption>See the Analysis in Action (Video-Click To Play)</figcaption>
+        </figure>
         <h3>Highlight Clip Generation</h3>
         <ul>
             <li>
-                <p><strong>Input</strong>: A video file and a list of timestamps for score changes.</p>
+                <strong>Input</strong>: A video file and a list of timestamps for score changes.
             </li>
             <li>
-                <p><strong>Expected Output</strong>: The application generates highlight clips around the detected score
-                    changes.</p>
+                <strong>Expected Output</strong>: The application generates highlight clips around the
+                detected
+                score
+                changes.
             </li>
             <li>
-                <p><strong>Result</strong>: Highlight clips were generated successfully, including the configured pre-
-                    and
-                    post-event time.</p>
+                <strong>Result</strong>: Highlight clips were generated successfully, including the
+                configured
+                pre-
+                and
+                post-event time.
             </li>
         </ul>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-            <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_0.mp4"
-                type="video/mp4"></video>
-            <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_1.mp4"
-                type="video/mp4"></video>
-            <video autoplay loop muted playsinline class="rounded-xl lg:ml-[50%]" src="Images/Final_clip_2.mp4"
-                type="video/mp4"></video>
+            <figure>
+                <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_0.mp4"
+                    type="video/mp4"></video>
+                <figcaption>Generated Clip (Video:Click to Play)</figcaption>
+            </figure>
+            <!-- <figure>
+                <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_1.mp4"
+                    type="video/mp4"></video>
+                <figcaption>Generated Clip (Video:Click to Play)</figcaption>
+            </figure> -->
+            <figure>
+                <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_2.mp4"
+                    type="video/mp4"></video>
+                <figcaption>Generated Clip (Video:Click to Play)</figcaption>
+            </figure>
+
+            <figure>
+                <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_4.mp4"
+                    type="video/mp4"></video>
+                <figcaption>Generated Clip (Video:Click to Play)</figcaption>
+            </figure>
+
+            <figure>
+                <video autoplay loop muted playsinline class="rounded-xl" src="Images/Final_clip_5.mp4"
+                    type="video/mp4"></video>
+                <figcaption>Generated Clip (Video:Click to Play)</figcaption>
+            </figure>
         </div>
-
         <h2>Links</h2>
-        <ul>
-            <li><a href="https://github.com/RobertmPevec/Clip_Genius"><strong>Github</strong></a></li>
-        </ul>
+        <ol>
+            <li>Source Code: <a href="https://github.com/RobertmPevec/Clip_Genius" target="_blank">Github</a></li>
+            <li><strong>Contributors</strong>
+                <ul>
+                    <li><strong>JD</strong>: <a href="https://jashandeep.co.uk">jashandeep.co.uk</a></li>
+                    <li><strong>Robert Pevec</strong> </li>
+                    <li><strong>Swaab Anas</strong></li>
+                    <li><strong>Suhana Khullar</strong></li>
+                </ul>
+            </li>
+        </ol>
 
+        <h2>Acknowledgments</h2>
+        <p>The <span class="text-blue-500 font-bold">Laurier Analytics</span> Hackathon was an incredible opportunity to
+            cullaborate, innovate, and push the
+            boundaries of what
+            we could achieve in a short timeframe. Over the course of the event, our team worked tirelessly to
+            design,
+            develop, overcoming technical challenges and learning new skills along the way. The experience
+            was both rewarding and inspiring.</p>
 
+        <p>We would like to extend our heartfelt gratitude to the Laurier Analytics team and Google Waterloo for
+            organizing this
+            event and providing a platform for innovation. Special thanks to our mentor, <Strong><a
+                    class="text-blue-500 font-bold" href="https://www.linkedin.com/in/shivamgarg--/">Shivam
+                    Garg</a></Strong>
+            who guided us through technical
+            hurdles and
+            offered valuable feedback to improve our project.</p>
         <h2>Next Iteration Plan</h2>
         <ul>
-            <li>Integrate advanced OCR engines (e.g., Google Vision API or AWS Textract) for improved text recognition
+            <li>Integrate advanced OCR engines (e.g., Google Vision API or AWS Textract) for improved text
+                recognition
             </li>
             <li>Increase the accuracy of score extraction from the scoreboard region</li>
             <li>Enable cloud-based video processing and storage for scalability.</li>
+            <li>
+                <h4>Integrate Storage</h4>
+                <img src="Images/ERD.svg" alt="" srcset="">
+            </li>
         </ul>
+
+        <div class="text-center mt-20 text-base-content">
+            <aside>
+                <a href="http://jashandeep.co.uk">© 2025 jashandeep.co.uk</a>
+            </aside>
+        </div>
     </main>
+
 
     <script src="../frontend/static/ReportsFormatter.js"></script>
     <!-- <script src="https://jayd719.github.io/assets/reports/reportV3.js"></script> -->
-    <script>
-        appendCDNToMediaElements('https://raw.githubusercontent.com/jayd719/jayd719.github.io/b5cb4160a7f6dca5d8d6bfc2c65d57fc69ef2167/assets/LaurierAnalytics/');
-    </script>
+    <!-- <script>
+        appendCDNToMediaElements('https://jayd719.github.io/assets/LaurierAnalytics/');
+    </script> -->
+
+    <script src="../frontend/static/PresentationFormatter.js"></script>
 
 </body>
 

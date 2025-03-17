@@ -15,13 +15,12 @@ import os
 
 # CONSTANTS
 TEMPFOLDER = "TEMPFOLDER"
-PRE_TIME = 5
-POST_TIME = 4
+PRE_TIME = 10
+POST_TIME = 6
 import json
 
 
-def format_time(milliseconds):
-    seconds = milliseconds / 1000
+def format_time(seconds):
     return time.strftime("%H:%M:%S", time.gmtime(seconds))
 
 
@@ -140,6 +139,11 @@ def create_clip(
     subprocess.run(command, check=True)
 
 
+def parse_output_dir(sourcefile):
+    path_ = sourcefile.split("/")[:-1]
+    return f"/{os.path.join(*path_)}"
+
+
 def process_results(
     source_file,
     results,
@@ -163,8 +167,12 @@ def process_results(
     -------------------------------------------------------
     """
     for i, result in enumerate(results):
-        start_time = format_time(max(result - (pre_time * 1000), 0))
-        end_time = format_time(result + (post_time * 1000))
+        start_time = format_time(max(result - pre_time, 0))
+        end_time = format_time(result + post_time)
         create_clip(
-            source_file, start_time, end_time, output_folder, f"Final_clip_{i}.mp4"
+            source_file,
+            start_time,
+            end_time,
+            os.path.join(parse_output_dir(source_file), output_folder),
+            f"Final_clip_{i}.mp4",
         )
