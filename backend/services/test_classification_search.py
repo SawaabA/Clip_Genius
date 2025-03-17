@@ -8,6 +8,7 @@ import nemo.collections.asr as nemo_asr
 from omegaconf import open_dict
 from sentence_transformers import SentenceTransformer
 import faiss
+import concurrent.futures
 
 # Put in API key to use Open AI
 client = OpenAI(api_key="")
@@ -124,7 +125,7 @@ def get_embedding(text, model="text-embedding-3-large"):
 # Transcibe, embed, rank and filter transcripts
 asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_fastconformer_transducer_large")
 index = faiss.read_index("highlight_vectors.faiss")
-def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
+def transcribe_embed_filter_nemo_slow(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
     clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
     timestamps_with_scores = []
 
@@ -155,4 +156,56 @@ def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_r
     keep_count = max(1, int(len(timestamps_with_scores) * keep_ratio))
     filtered_dict = {ts: score for ts, score in timestamps_with_scores[:keep_count]}
 
+    return filtered_dict
+
+# Helper function for transcribe_embed_filter_nemo
+def process_file(file, fallback_index, folder_path, chunk_duration, alpha):
+    file_path = os.path.join(folder_path, file)
+
+    while True: # Set infinite loop until works
+        try:
+            hypotheses = asr_model.transcribe([file_path], return_hypotheses=True)
+            transcript = hypotheses[0].text if isinstance(hypotheses, list) else hypotheses.text
+            embedding = minilm_model.encode(transcript)
+            distances, _ = index.search(np.array([embedding]), k=8)
+            try:
+                index_val = int(file.split("_")[1].split(".")[0])
+            except Exception:
+                index_val = fallback_index
+
+            time_stamp = index_val * chunk_duration
+            similarity_score = 1 - np.mean(distances[0]) if len(distances[0]) > 0 else 0
+            time_bonus = alpha * time_stamp
+            adjusted_score = similarity_score + time_bonus
+            os.remove(file_path)
+            return (time_stamp, adjusted_score)
+
+        except Exception as e:
+            print(f"Error processing {file}: {e}")
+            print("Retrying...")
+
+# Transcibe, embed, rank and filter transcripts but in parallel
+def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
+    # Gather all .wav files
+    clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
+    results = []
+    max_workers = min(8, len(clip_files))
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {
+            executor.submit(process_file, file, idx, folder_path, chunk_duration, alpha): file
+            for idx, file in enumerate(clip_files)
+        }
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                result = future.result()
+                results.append(result)
+            except Exception as e:
+                print(f"Error processing file {futures[future]}: {e}")
+
+    results.sort(key=lambda x: x[1], reverse=True)
+    keep_count = max(1, int(len(results) * keep_ratio))
+    filtered_dict = {ts: score for ts, score in results[:keep_count]}
+    
     return filtered_dict

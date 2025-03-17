@@ -193,4 +193,4 @@ if __name__ == "__main__":
     window.show()
     sys.exit(app.exec_())
 
-#python clip_genius_application.py
+# python clip_genius_application.py
