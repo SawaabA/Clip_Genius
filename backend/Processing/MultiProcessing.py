@@ -19,14 +19,13 @@ import os
 def thread_wrapper(segment_path, score_coords, duration, result_queue):
     """
     -------------------------------------------------------
-    Analyzes video segments in parallel using multiple threads to detect score changes.
-    Use: results = analyze_segments_with_threads(segment_folder, score_coords)
+    Analyzes a video segment in a separate thread.
     -------------------------------------------------------
     Parameters:
-        segment_folder - the directory containing the video segments to analyze (str)
+        segment_path - the path of the video segment to analyze (str)
         score_coords - coordinates (x, y, w, h)
-    Returns:
-        results - a list of results from analyzing the segments (list)
+        duration - cumulative duration of previous segments (float)
+        result_queue - queue to store the results (Queue)
     -------------------------------------------------------
     """
     result = analyze_segment(segment_path, score_coords, duration)
@@ -37,20 +36,19 @@ def analayze_segments_with_threads(segment_folder, score_coords):
     """
     -------------------------------------------------------
     Analyzes video segments in parallel using multiple threads to detect score changes.
-    Use: results = analyze_segments_with_threads(segment_folder, score_coords)
     -------------------------------------------------------
     Parameters:
         segment_folder - the directory containing the video segments to analyze (str)
         score_coords - coordinates (x, y, w, h)
     Returns:
-        results - a list of results
+        results - a list of results from analyzing the segments (list)
     -------------------------------------------------------
     """
     result_queue = queue.Queue()
     threads = []
     duration = 0
 
-    segments = os.listdir(os.path.join(segment_folder))
+    segments = os.listdir(segment_folder)
     for i, segment in enumerate(segments):
         segment = os.path.join(segment_folder, segment)
         print(f"{i} - {segment} @ {duration}")
@@ -68,6 +66,10 @@ def analayze_segments_with_threads(segment_folder, score_coords):
 
     results = []
     while not result_queue.empty():
-        results.extend(result_queue.get())
+        result = result_queue.get()
+        if isinstance(result, list):
+            results.extend(result)
+        else:
+            results.append(result)
 
     return results

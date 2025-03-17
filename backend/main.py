@@ -2,9 +2,12 @@ import argparse
 from Processing.Processor import PROCESS_VIDEO
 from Processing.Processor import PROCESS_FILE
 from Processing.Processor import PROCESS_FILE_MULTI_THREAD
+from datetime import datetime
+import os
 
 
 def main(video_path, function_name, mode):
+    start = datetime.now()
     if function_name == "PROCESS_VIDEO":
         PROCESS_VIDEO(video_path)
     elif function_name == "PROCESS_FILE":
@@ -13,6 +16,7 @@ def main(video_path, function_name, mode):
         PROCESS_FILE_MULTI_THREAD(video_path)
     else:
         print(f"Error: Unknown function '{function_name}'")
+    print(f"TIME ELAPSED : {(datetime.now()-start).total_seconds():.2f} sec")
 
 
 if __name__ == "__main__":

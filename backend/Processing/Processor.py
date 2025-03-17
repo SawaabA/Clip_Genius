@@ -50,7 +50,7 @@ def PROCESS_VIDEO(file_path: str):
         else:
             frame = plotscores_on_images(frame, abs_cords)
             cv.rectangle(frame, (x1, y1), (x2, y2), COLOR, 2)
-        timestamp = video.get(cv.CAP_PROP_POS_MSEC)
+        timestamp = video.get(cv.CAP_PROP_POS_MSEC) / 1000
         add_timestamp_to_frame(frame, timestamp)
         cv.imshow("Scoreboard Detection", frame)
 
