@@ -7,6 +7,7 @@ import ffmpeg
 import nemo.collections.asr as nemo_asr
 from omegaconf import open_dict
 from sentence_transformers import SentenceTransformer
+import faiss
 
 # Put in API key to use Open AI
 client = OpenAI(api_key="")
@@ -58,7 +59,6 @@ def split_audio(input_audio, output_folder="clips", chunk_length=30, buffer=5, d
 
         if delete_original:
             os.remove(input_audio)
-            print(f"Deleted original file: {input_audio}")
 
         return output_files
 
@@ -80,7 +80,6 @@ minilm_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Get vector embedding locally
 def MiniLM_embedding(text):
-    """Returns the embedding vector for the given text using MiniLM."""
     return minilm_model.encode(text)
 
 # Transcribe audio locally using NeMo and insert into dictionary
@@ -121,3 +120,39 @@ def get_embedding(text, model="text-embedding-3-large"):
     response = openai.embeddings.create(input=[text], model=model)
     embedding = response.data[0].embedding
     return embedding
+
+# Transcibe, embed, rank and filter transcripts
+asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_fastconformer_transducer_large")
+index = faiss.read_index("highlight_vectors.faiss")
+def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
+    clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
+    timestamps_with_scores = []
+
+    for file in clip_files:
+        file_path = os.path.join(folder_path, file)
+
+        # Transcribe audio
+        hypotheses = asr_model.transcribe([file_path], return_hypotheses=True)
+        transcript = hypotheses[0].text if isinstance(hypotheses, list) else hypotheses.text
+
+        # Generate embedding
+        embedding = minilm_model.encode(transcript)
+        distances, _ = index.search(np.array([embedding]), k=8)
+        try:
+            index_val = int(file.split("_")[1].split(".")[0])
+        except Exception:
+            index_val = len(timestamps_with_scores)  
+        time_stamp = index_val * chunk_duration
+        similarity_score = 1 - np.mean(distances[0]) if len(distances[0]) > 0 else 0
+        # small linear boost to later clips
+        time_bonus = alpha * time_stamp
+        adjusted_score = similarity_score + time_bonus
+        timestamps_with_scores.append((time_stamp, adjusted_score))
+        os.remove(file_path)
+
+    timestamps_with_scores.sort(key=lambda x: x[1], reverse=True)
+
+    keep_count = max(1, int(len(timestamps_with_scores) * keep_ratio))
+    filtered_dict = {ts: score for ts, score in timestamps_with_scores[:keep_count]}
+
+    return filtered_dict
