@@ -71,7 +71,7 @@ function generateIndex(containerId = "index") {
 
         indexList.appendChild(listItem);
     });
-    container.classList.add("lg:w-72", "overflow-y-scroll", "border", "print:border-0", "p-3", "bg-base-200")
+    container.classList.add("overflow-y-scroll", "border", "print:border-0", "p-3", "bg-base-200")
 }
 
 function updateCSS(tags, addClasses = [], removeClasses = []) {
@@ -140,13 +140,13 @@ function updateCSS_ALL() {
 
 
 
-loadScript("https://cdn.tailwindcss.com")
-loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css");
-document.documentElement.setAttribute("data-theme", "lofi");
-setTimeout(() => {
-    updateCSS_ALL()
-    generateIndex()
-}, 200);
+// loadScript("https://cdn.tailwindcss.com")
+// loadStylesheet("https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css");
+// document.documentElement.setAttribute("data-theme", "lofi");
+// setTimeout(() => {
+//     updateCSS_ALL()
+//     generateIndex()
+// }, 200);
 
-document.querySelector("main").className = "container mx-auto p-5 lg:px-[10.0%] py-8 overflow-y-scroll print:px-0"
-document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")
+// document.querySelector("main").className = "container mx-auto p-5 lg:px-[10.0%] py-8 overflow-y-scroll print:px-0"
+// document.body.classList.add("lg:flex", "print:block", "h-screen", "text-sm")

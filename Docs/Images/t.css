@@ -1,0 +1,49 @@
+/* print.css */
+@media print {
+
+
+    /* Remove unnecessary elements */
+    nav, footer, aside, form,video, iframe, .no-print {
+        display: none !important;
+    }
+
+    /* Ensure links are visible and include URLs */
+    a {
+        text-decoration: underline !important;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    /* Simplify typography */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+
+    p, blockquote {
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* Prevent page breaks inside elements */
+    pre, code, table {
+        page-break-inside: avoid;
+    }
+
+    /* Simplify tables */
+    table {
+        border-collapse: collapse !important;
+    }
+
+    th, td {
+        border: 1px solid #000 !important;
+    }
+
+
+
+    /* Hide decorative elements */
+    .decoration, .bg-image, .icon {
+        display: none !important;
+    }
+}

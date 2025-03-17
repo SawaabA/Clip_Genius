@@ -1,6 +1,7 @@
 @startuml ERD
 
 title "ERD For Clip Genius"
+left to right direction
 entity Sports {
   *SportID : INT <<PK>>
   --
