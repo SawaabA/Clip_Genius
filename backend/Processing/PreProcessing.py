@@ -139,6 +139,11 @@ def create_clip(
     subprocess.run(command, check=True)
 
 
+def parse_output_dir(sourcefile):
+    path_ = sourcefile.split("/")[:-1]
+    return f"/{os.path.join(*path_)}"
+
+
 def process_results(
     source_file,
     results,
@@ -165,5 +170,9 @@ def process_results(
         start_time = format_time(max(result - pre_time, 0))
         end_time = format_time(result + post_time)
         create_clip(
-            source_file, start_time, end_time, output_folder, f"Final_clip_{i}.mp4"
+            source_file,
+            start_time,
+            end_time,
+            os.path.join(parse_output_dir(source_file), output_folder),
+            f"Final_clip_{i}.mp4",
         )

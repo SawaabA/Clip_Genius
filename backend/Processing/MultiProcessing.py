@@ -48,7 +48,7 @@ def analayze_segments_with_threads(segment_folder, score_coords):
     threads = []
     duration = 0
 
-    segments = os.listdir(segment_folder)
+    segments = sorted(os.listdir(segment_folder))
     for i, segment in enumerate(segments):
         segment = os.path.join(segment_folder, segment)
         print(f"{i} - {segment} @ {duration}")

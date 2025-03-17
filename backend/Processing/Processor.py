@@ -61,7 +61,7 @@ def PROCESS_VIDEO(file_path: str):
     cv.destroyAllWindows()
 
 
-def PROCESS_FILE(filepath, debug=False):
+def PROCESS_FILE(filepath, debug=False, output_folder="output"):
     """
     -------------------------------------------------------
     Processes a video file to detect score changes, analyze segments, and generate highlight clips.
@@ -77,7 +77,7 @@ def PROCESS_FILE(filepath, debug=False):
     results = analyze_segment(filepath, cords, 0, debug)
     results = sorted(results)
     print(f"\nCompleted\n\tTotal Shots Detected {len(results)}")
-    process_results(filepath, results)
+    process_results(filepath, results, output_folder)
 
 
 def PROCESS_FILE_MULTI_THREAD(filepath, tempfolder=TEMPFOLDER):

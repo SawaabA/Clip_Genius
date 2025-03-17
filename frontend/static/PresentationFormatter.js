@@ -23,8 +23,8 @@ function CreatePresentation() {
     const h4 = "text-2xl leading-none font-light mt-20 mb-5 snap-start"
     const p = "text-base-content/70 font-title font-light md:text-2xl mb-6 mt-2 text-justify"
     const list = "grid grid-cols-1 lg:grid-cols-2 gap-20"
-    const ul = "list-disc lg:pl-10 mb-10"
-    const ol = "list-decimal lg:pl-10 mb-10"
+    const ul = "list-disc pl-2 lg:pl-10 mb-10"
+    const ol = "list-decimal pl-2 lg:pl-10 mb-10"
     const li = "text-base-content/70 font-title font-light md:text-lg text-justify"
 
     updateCSS(['h1'], h1.split(" "));
