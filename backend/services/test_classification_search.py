@@ -234,12 +234,10 @@ def merge_clips(output_folder, final_output="merged_video.mp4", delete_clips=Tru
     final_output_path = os.path.join(output_folder, final_output)
     command = ["ffmpeg", "-f", "concat", "-safe", "0", "-i", file_list_path, "-c", "copy", final_output_path]
     subprocess.run(command, check=True)
-    print(f"✅ Merged all clips into {final_output_path}")
 
     if delete_clips:
         for clip in clips:
             os.remove(os.path.join(output_folder, clip))
-        print("✅ Deleted all individual clips after merging.")
 
 def output_video(dictionary, input_file):
     times = sorted(dictionary.keys())
@@ -261,4 +259,3 @@ def output_video(dictionary, input_file):
 
     if os.path.exists(input_file):
         os.remove(input_file)
-        print(f"✅ Deleted {input_file} after processing.")
