@@ -9,6 +9,7 @@ from omegaconf import open_dict
 from sentence_transformers import SentenceTransformer
 import faiss
 import concurrent.futures
+import subprocess
 
 # Put in API key to use Open AI
 client = OpenAI(api_key="")
@@ -122,41 +123,45 @@ def get_embedding(text, model="text-embedding-3-large"):
     embedding = response.data[0].embedding
     return embedding
 
-# Transcibe, embed, rank and filter transcripts
+# Load NeMo ASR model
 asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_fastconformer_transducer_large")
 index = faiss.read_index("highlight_vectors.faiss")
-def transcribe_embed_filter_nemo_slow(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
-    clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
-    timestamps_with_scores = []
+minilm_model = SentenceTransformer("all-MiniLM-L6-v2")
 
-    for file in clip_files:
-        file_path = os.path.join(folder_path, file)
+# Ensure freeze() is applied before unfreeze()
+asr_model.freeze()
 
-        # Transcribe audio
-        hypotheses = asr_model.transcribe([file_path], return_hypotheses=True)
-        transcript = hypotheses[0].text if isinstance(hypotheses, list) else hypotheses.text
+def create_clip(input_file, start_time, end_time, output_folder, output_filename):
+    """
+    Extracts a video segment using FFmpeg.
 
-        # Generate embedding
-        embedding = minilm_model.encode(transcript)
-        distances, _ = index.search(np.array([embedding]), k=8)
-        try:
-            index_val = int(file.split("_")[1].split(".")[0])
-        except Exception:
-            index_val = len(timestamps_with_scores)  
-        time_stamp = index_val * chunk_duration
-        similarity_score = 1 - np.mean(distances[0]) if len(distances[0]) > 0 else 0
-        # small linear boost to later clips
-        time_bonus = alpha * time_stamp
-        adjusted_score = similarity_score + time_bonus
-        timestamps_with_scores.append((time_stamp, adjusted_score))
-        os.remove(file_path)
+    Parameters:
+        input_file - The input video file path (str)
+        start_time - The start time of the segment (str, HH:MM:SS format)
+        end_time - The end time of the segment (str, HH:MM:SS format)
+        output_folder - The folder where the output file will be saved (str)
+        output_filename - The name of the output video file (str)
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
 
-    timestamps_with_scores.sort(key=lambda x: x[1], reverse=True)
+    output_path = os.path.join(output_folder, output_filename)
 
-    keep_count = max(1, int(len(timestamps_with_scores) * keep_ratio))
-    filtered_dict = {ts: score for ts, score in timestamps_with_scores[:keep_count]}
+    command = [
+        "ffmpeg",
+        "-i", input_file,
+        "-ss", start_time,
+        "-to", end_time,
+        "-c", "copy",
+        output_path
+    ]
+    
+    subprocess.run(command, check=True)
+    print(f"✅ Created clip: {output_path}")
 
-    return filtered_dict
+def format_time(seconds):
+    """ Converts seconds into HH:MM:SS format """
+    return f"{seconds//3600:02}:{(seconds%3600)//60:02}:{seconds%60:02}"
 
 # Helper function for transcribe_embed_filter_nemo
 def process_file(file, fallback_index, folder_path, chunk_duration, alpha):
@@ -209,3 +214,51 @@ def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_r
     filtered_dict = {ts: score for ts, score in results[:keep_count]}
     
     return filtered_dict
+
+def process_clip(i, n, input_file, output_folder):
+    start_time = format_time(n)
+    end_time = format_time(n + 35)
+    output_filename = f"clip_{i + 1}.mp4"
+    create_clip(input_file, start_time, end_time, output_folder, output_filename)
+
+def merge_clips(output_folder, final_output="merged_video.mp4", delete_clips=True):
+    """ Merges all mp4 clips into one final MP4 file using FFmpeg and deletes the clips after merging. """
+    file_list_path = os.path.join(output_folder, "file_list.txt")
+    
+    clips = sorted([f for f in os.listdir(output_folder) if f.endswith(".mp4")], key=lambda x: int(x.split("_")[1].split(".")[0]))
+
+    with open(file_list_path, "w") as f:
+        for clip in clips:
+            f.write(f"file '{os.path.join(output_folder, clip)}'\n")
+
+    final_output_path = os.path.join(output_folder, final_output)
+    command = ["ffmpeg", "-f", "concat", "-safe", "0", "-i", file_list_path, "-c", "copy", final_output_path]
+    subprocess.run(command, check=True)
+    print(f"✅ Merged all clips into {final_output_path}")
+
+    if delete_clips:
+        for clip in clips:
+            os.remove(os.path.join(output_folder, clip))
+        print("✅ Deleted all individual clips after merging.")
+
+def output_video(dictionary, input_file):
+    times = sorted(dictionary.keys())
+    output_folder = os.path.join(os.path.dirname(__file__), "clips")
+
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        futures = {executor.submit(process_clip, i, n, input_file, output_folder): n for i, n in enumerate(times)}
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                future.result()
+            except Exception as e:
+                print(f"⚠️ Error processing clip: {e}")
+
+    merge_clips(output_folder, delete_clips=True)
+
+    if os.path.exists(input_file):
+        os.remove(input_file)
+        print(f"✅ Deleted {input_file} after processing.")
