@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP PROCESSING</title>
+</head>
+
+<main>
+    <h2>Design Specifications for</h2>
+    <h1>CLIP GENIUS: NPL UNIT</h1>
+
+    <h2>Introduction</h2>
+    <p>In today’s fast-paced digital world, videos have become a primary medium for sharing information, ideas, and
+        stories.
+        However, with the increasing volume of video content, identifying the most important and relevant moments can be
+        a
+        time-consuming and challenging task. Our software is designed to simplify this process by leveraging advanced
+        technology
+        to analyze and highlight the key parts of a video based on what’s being said. Think of it as having an
+        intelligent
+        assistant that listens to your video and guides you directly to the moments that matter most.</p>
+
+    <h3>How It Works</h3>
+    <ol start="1">
+        <li>
+            <p><strong>Audio Extraction</strong>: We begin by isolating the audio track from your video, preparing it
+                for
+                analysis. This step is akin to extracting the soundtrack from a movie, ensuring the audio is ready for
+                further processing.</p>
+        </li>
+        <li>
+            <p><strong>Chunk Splitting</strong>: To handle lengthy audio files, we divide the audio into smaller,
+                manageable
+                segments. This approach is similar to breaking a large book into chapters, making it easier to process
+                and
+                analyze.</p>
+        </li>
+        <li>
+            <p><strong>Speech-to-Text Transcription</strong>: Using NVIDIA’s NeMo ASR model, we convert the spoken words
+                in
+                each audio segment into text. This powerful tool acts like a virtual transcriber, accurately turning
+                speech
+                into written form.</p>
+        </li>
+        <li>
+            <p><strong>Semantic Analysis</strong>: Finally, we analyze the transcribed text to identify the most
+                important
+                parts. By comparing the text against predefined topics or keywords, such as “machine learning,” we
+                pinpoint
+                the segments that are most relevant to your needs.</p>
+        </li>
+    </ol>
+
+
+    <h2>Application Overview</h2>
+    <p>The application is designed to automatically generate video highlights from a given video file. It uses advanced
+        technologies like speech recognition, semantic analysis, and video processing to identify and extract the most
+        relevant
+        segments of the video. The highlights are then compiled into a shorter, engaging video.</p>
+    <h3>Technologies Used</h3>
+    <ul>
+        <li>
+            <p><strong>Languages</strong>: Python.</p>
+        </li>
+        <li>
+            <p><strong>Libraries</strong>:</p>
+            <ul>
+                <li>
+                    <p>FFmpeg for audio/video processing.</p>
+                </li>
+                <li>
+                    <p>NVIDIA NeMo for speech-to-text transcription.</p>
+                </li>
+                <li>
+                    <p>Sentence Transformers for text embeddings.</p>
+                </li>
+                <li>
+                    <p>FAISS for similarity search.</p>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <p><strong>Parallel Processing</strong>: Concurrent.futures for efficient chunk processing.</p>
+        </li>
+    </ul>
+
+    <h2>Performance Considerations</h2>
+    <ul>
+        <li>
+            <p><strong>Parallel Processing</strong>: Used multi-threading to speed up transcription and embedding tasks.
+            </p>
+        </li>
+        <li>
+            <p><strong>Efficient Storage</strong>: Deletes temporary files (e.g., audio chunks) after processing to save
+                disk
+                space.</p>
+        </li>
+    </ul>
+
+    <h2>Tests</h2>
+    <ul>
+        <li>
+            <p><strong>Test Case</strong>: Verify that the application successfully converts a 15-minute video into a
+                10-minute highlights video by removing unnecessary parts.</p>
+        </li>
+        <li>
+            <p><strong>Steps</strong>:</p>
+            <ul start="1">
+                <li>
+                    <p>Upload a 15-minute video file.</p>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <p><strong>Expected Result</strong>: The output video is of reduced length, containing only the
+                most
+                relevant segments from the original video.</p>
+        </li>
+        <li>
+            <p><strong>Outcome</strong>: <strong>Successfully converted a 15-minute video into a 10-minute highlights
+                    video
+                    after removing unnecessary parts.</strong> The application accurately identified and retained the
+                key
+                moments while discarding less relevant content.</p>
+        </li>
+    </ul>
+
+
+    <h4>Future Enhancements</h4>
+    <ul start="1">
+        <li>
+            <p><strong>Customizable Highlight Length</strong>: Allow users to specify the desired length of the
+                highlights
+                video.</p>
+        </li>
+        <li>
+            <p><strong>Multi-Language Support</strong>: Extend transcription capabilities to support multiple languages.
+            </p>
+        </li>
+        <li>
+            <p><strong>Cloud Integration</strong>: Enable processing of videos stored in cloud storage (e.g., Google
+                Drive,
+                Dropbox).</p>
+        </li>
+
+    </ul>
+</main>
+
+
+<script src="../frontend/static/ReportsFormatter.js"></script>
+<script src="../frontend/static/PresentationFormatter.js"></script>
+
+<body>
+
+</body>
+
+</html>
