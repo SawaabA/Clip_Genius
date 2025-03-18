@@ -14,11 +14,13 @@ import subprocess
 # Put in API key to use Open AI
 client = OpenAI(api_key="")
 
+
 # Find the amount of tokens in a string
 def num_of_tokens_from_string(text: str, encoding_name: str = "cl100k_base") -> int:
     encoding = tiktoken.get_encoding(encoding_name)
     tokens = encoding.encode(text)
     return len(tokens)
+
 
 # Check the simularity of two vectors
 def cosine_simularity(vector1, vector2):
@@ -31,19 +33,25 @@ def cosine_simularity(vector1, vector2):
         return 0.0
     return dot_product / (norm1 * norm2)
 
+
 # Extract an .wav of the audio from user's mp4 file
 def extract_audio(video_path, audio_output="temp_audio.wav"):
-    ffmpeg.input(video_path).output(audio_output, format="wav", acodec="pcm_s16le", ar=16000, ac=1).run(overwrite_output=True)
+    ffmpeg.input(video_path).output(
+        audio_output, format="wav", acodec="pcm_s16le", ar=16000, ac=1
+    ).run(overwrite_output=True)
     return audio_output
 
+
 # Split audio into 30 second segments + 5 second buffer
-def split_audio(input_audio, output_folder="clips", chunk_length=30, buffer=5, delete_original=True):
+def split_audio(
+    input_audio, output_folder="clips", chunk_length=30, buffer=5, delete_original=True
+):
     try:
         os.makedirs(output_folder, exist_ok=True)
 
         # Get audio duration
         probe = ffmpeg.probe(input_audio)
-        duration = float(probe['format']['duration'])
+        duration = float(probe["format"]["duration"])
 
         num_chunks = math.ceil(duration / chunk_length)
         output_files = []
@@ -68,53 +76,57 @@ def split_audio(input_audio, output_folder="clips", chunk_length=30, buffer=5, d
         print("Error:", e)
         return []
 
+
 # Transcribe audio to get transcript
 def transcribe_audio(audio_path):
     with open(audio_path, "rb") as file:
-        transcript = openai.audio.transcriptions.create(
-            model="whisper-1",
-            file=file
-        )
+        transcript = openai.audio.transcriptions.create(model="whisper-1", file=file)
     return transcript.text
+
 
 # We load the model initialy so we dont have to load it every call
 minilm_model = SentenceTransformer("all-MiniLM-L6-v2")
+
 
 # Get vector embedding locally
 def MiniLM_embedding(text):
     return minilm_model.encode(text)
 
+
 # Transcribe audio locally using NeMo and insert into dictionary
 def transcribe_and_embed_nemo(folder_path="clips/", chunk_duration=30):
-    asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_fastconformer_transducer_large")
+    asr_model = nemo_asr.models.ASRModel.from_pretrained(
+        "stt_en_fastconformer_transducer_large"
+    )
     clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
     results = {}
-    
+
     # Process each file
     for file in clip_files:
         file_path = os.path.join(folder_path, file)
-        
+
         hypotheses = asr_model.transcribe([file_path], return_hypotheses=True)
         if isinstance(hypotheses, tuple):
             hypotheses = hypotheses[0]
         transcript = hypotheses[0].text
-        
+
         # Get embedding for the transcript
         embedding = MiniLM_embedding(transcript)
-        
+
         try:
             index = int(file.split("_")[1].split(".")[0])
         except Exception:
             index = len(results)
         time_stamp = index * chunk_duration
-        
+
         results[time_stamp] = embedding.tolist()
-        
+
         # Delete no longer needed file
         os.remove(file_path)
         print(f"Deleted {file}")
 
     return results
+
 
 # Get vector embedding from OpenAI
 def get_embedding(text, model="text-embedding-3-large"):
@@ -123,13 +135,17 @@ def get_embedding(text, model="text-embedding-3-large"):
     embedding = response.data[0].embedding
     return embedding
 
+
 # Load NeMo ASR model
-asr_model = nemo_asr.models.ASRModel.from_pretrained("stt_en_fastconformer_transducer_large")
+asr_model = nemo_asr.models.ASRModel.from_pretrained(
+    "stt_en_fastconformer_transducer_large"
+)
 index = faiss.read_index("highlight_vectors.faiss")
 minilm_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Ensure freeze() is applied before unfreeze()
 asr_model.freeze()
+
 
 def create_clip(input_file, start_time, end_time, output_folder, output_filename):
     """
@@ -149,28 +165,36 @@ def create_clip(input_file, start_time, end_time, output_folder, output_filename
 
     command = [
         "ffmpeg",
-        "-i", input_file,
-        "-ss", start_time,
-        "-to", end_time,
-        "-c", "copy",
-        output_path
+        "-i",
+        input_file,
+        "-ss",
+        start_time,
+        "-to",
+        end_time,
+        "-c",
+        "copy",
+        output_path,
     ]
-    
+
     subprocess.run(command, check=True)
-    print(f"✅ Created clip: {output_path}")
+    print(f"Created clip: {output_path}")
+
 
 def format_time(seconds):
-    """ Converts seconds into HH:MM:SS format """
+    """Converts seconds into HH:MM:SS format"""
     return f"{seconds//3600:02}:{(seconds%3600)//60:02}:{seconds%60:02}"
+
 
 # Helper function for transcribe_embed_filter_nemo
 def process_file(file, fallback_index, folder_path, chunk_duration, alpha):
     file_path = os.path.join(folder_path, file)
 
-    while True: # Set infinite loop until works
+    while True:  # Set infinite loop until works
         try:
             hypotheses = asr_model.transcribe([file_path], return_hypotheses=True)
-            transcript = hypotheses[0].text if isinstance(hypotheses, list) else hypotheses.text
+            transcript = (
+                hypotheses[0].text if isinstance(hypotheses, list) else hypotheses.text
+            )
             embedding = minilm_model.encode(transcript)
             distances, _ = index.search(np.array([embedding]), k=8)
             try:
@@ -189,8 +213,11 @@ def process_file(file, fallback_index, folder_path, chunk_duration, alpha):
             print(f"Error processing {file}: {e}")
             print("Retrying...")
 
+
 # Transcibe, embed, rank and filter transcripts but in parallel
-def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003):
+def transcribe_embed_filter_nemo(
+    folder_path="clips/", chunk_duration=30, keep_ratio=0.4, alpha=0.00003
+):
     # Gather all .wav files
     clip_files = [f for f in os.listdir(folder_path) if f.endswith(".wav")]
     results = []
@@ -198,7 +225,9 @@ def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_r
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(process_file, file, idx, folder_path, chunk_duration, alpha): file
+            executor.submit(
+                process_file, file, idx, folder_path, chunk_duration, alpha
+            ): file
             for idx, file in enumerate(clip_files)
         }
 
@@ -212,8 +241,9 @@ def transcribe_embed_filter_nemo(folder_path="clips/", chunk_duration=30, keep_r
     results.sort(key=lambda x: x[1], reverse=True)
     keep_count = max(1, int(len(results) * keep_ratio))
     filtered_dict = {ts: score for ts, score in results[:keep_count]}
-    
+
     return filtered_dict
+
 
 def process_clip(i, n, input_file, output_folder):
     start_time = format_time(n)
@@ -221,18 +251,33 @@ def process_clip(i, n, input_file, output_folder):
     output_filename = f"clip_{i + 1}.mp4"
     create_clip(input_file, start_time, end_time, output_folder, output_filename)
 
+
 def merge_clips(output_folder, final_output="merged_video.mp4", delete_clips=True):
-    """ Merges all mp4 clips into one final MP4 file using FFmpeg and deletes the clips after merging. """
+    """Merges all mp4 clips into one final MP4 file using FFmpeg and deletes the clips after merging."""
     file_list_path = os.path.join(output_folder, "file_list.txt")
-    
-    clips = sorted([f for f in os.listdir(output_folder) if f.endswith(".mp4")], key=lambda x: int(x.split("_")[1].split(".")[0]))
+
+    clips = sorted(
+        [f for f in os.listdir(output_folder) if f.endswith(".mp4")],
+        key=lambda x: int(x.split("_")[1].split(".")[0]),
+    )
 
     with open(file_list_path, "w") as f:
         for clip in clips:
             f.write(f"file '{os.path.join(output_folder, clip)}'\n")
 
     final_output_path = os.path.join(output_folder, final_output)
-    command = ["ffmpeg", "-f", "concat", "-safe", "0", "-i", file_list_path, "-c", "copy", final_output_path]
+    command = [
+        "ffmpeg",
+        "-f",
+        "concat",
+        "-safe",
+        "0",
+        "-i",
+        file_list_path,
+        "-c",
+        "copy",
+        final_output_path,
+    ]
     subprocess.run(command, check=True)
     print(f"✅ Merged all clips into {final_output_path}")
 
@@ -240,6 +285,7 @@ def merge_clips(output_folder, final_output="merged_video.mp4", delete_clips=Tru
         for clip in clips:
             os.remove(os.path.join(output_folder, clip))
         print("✅ Deleted all individual clips after merging.")
+
 
 def output_video(dictionary, input_file):
     times = sorted(dictionary.keys())
@@ -249,16 +295,19 @@ def output_video(dictionary, input_file):
         os.makedirs(output_folder)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-        futures = {executor.submit(process_clip, i, n, input_file, output_folder): n for i, n in enumerate(times)}
+        futures = {
+            executor.submit(process_clip, i, n, input_file, output_folder): n
+            for i, n in enumerate(times)
+        }
 
         for future in concurrent.futures.as_completed(futures):
             try:
                 future.result()
             except Exception as e:
-                print(f"⚠️ Error processing clip: {e}")
+                print(f"Error processing clip: {e}")
 
     merge_clips(output_folder, delete_clips=True)
 
     if os.path.exists(input_file):
         os.remove(input_file)
-        print(f"✅ Deleted {input_file} after processing.")
+        print(f"Deleted {input_file} after processing.")
