@@ -37,6 +37,13 @@ Together, they detect scoreboard events, analyze commentary for excitement, and 
 - **Efficient Processing**  
   Multi-threaded processing saves up to 14 hours per project by automating segment-based editing.
 
+### Feature Previews
+
+![Scoreboard Detection](./1744339845472.jpg)
+*Scoreboard region successfully identified and extracted from raw footage.*
+
+![Highlight Generation](./1744339845925.jpg)
+*Highlight moment timestamped and isolated for auto-clip generation.*
 ---
 
 ## Tech Stack
