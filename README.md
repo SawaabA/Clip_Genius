@@ -72,6 +72,10 @@ python main.py <video_path> --function <function_name> --debug --output <output_
 - **Suhana Khullar** – [Instagram](https://instagram.com)
 
 ---
+> **📄 Full Documentation:**  
+> My amazing teammate and friend created fantastic documentation for this project.  
+> 👉 [Visit the docs here](https://jashandeep.co.uk/pages/LaurierAnalytics2025#91oz.-9s74o8ib7)
+---
 
 ## Acknowledgments
 
